@@ -3,13 +3,14 @@ mod image;
 mod vector;
 mod ray;
 mod screen;
+mod background;
 
 fn clamp(x: f64, min: f64, max: f64) -> f64 {
     if x < min { min } else if x > max { max } else { x }
 }
 
 struct SkyBg;
-impl screen::Background for SkyBg {
+impl background::Background for SkyBg {
     fn color_at(&self, _w: (usize, usize), h: (usize, usize)) -> image::Pixel {
         let t = h.0 as f64 / h.1 as f64;
         let r = clamp((1.0 - t) * 256.0 + t * 128.0, 0.0, 255.0) as u8;
