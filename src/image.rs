@@ -45,6 +45,13 @@ impl Image {
         }
     }
 
+    pub fn at    (&self, w: usize, h: usize) -> &Pixel {
+        &self.pixels[h * self.width + w]
+    }
+    pub fn at_mut(&mut self, w: usize, h: usize) -> &mut Pixel {
+        &mut self.pixels[h * self.width + w]
+    }
+
     pub fn lines(&self) -> std::slice::ChunksExact<Pixel> {
         self.pixels.chunks_exact(self.width)
     }
