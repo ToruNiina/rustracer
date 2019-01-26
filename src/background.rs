@@ -13,3 +13,18 @@ pub trait Background {
         image
     }
 }
+
+pub struct SkyBg;
+
+impl Background for SkyBg {
+    fn color_at(&self, _w: (usize, usize), h: (usize, usize)) -> Pixel {
+        let t = h.0 as f64 / h.1 as f64;
+        let r = clamp((1.0 - t) * 256.0 + t * 128.0, 0.0, 255.0) as u8;
+        let g = clamp((1.0 - t) * 256.0 + t * 180.0, 0.0, 255.0) as u8;
+        Pixel::rgb(r, g, 255)
+    }
+}
+
+fn clamp(x: f64, min: f64, max: f64) -> f64 {
+    if x < min { min } else if x > max { max } else { x }
+}
