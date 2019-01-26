@@ -1,6 +1,7 @@
 mod error;
 mod image;
 mod vector;
+mod ray;
 
 fn main() {
     let mut img = image::Image::new(640, 480);
