@@ -1,5 +1,5 @@
 use crate::vector::Vector3;
-use crate::image::{Pixel, Image};
+use crate::image::{Color, Image};
 use crate::background::Background;
 
 pub struct Screen<B: Background> {

@@ -4,32 +4,32 @@ use crate::error::Result;
 use std::io::Write;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub struct Pixel {
+pub struct Color {
    r: u8,
    g: u8,
    b: u8,
    a: u8,
 }
 
-impl Pixel {
-    pub fn new(r: u8, g: u8, b: u8, a: u8) -> Pixel {
-        Pixel {r:r, g:g, b:b, a:a}
+impl Color {
+    pub fn new(r: u8, g: u8, b: u8, a: u8) -> Color {
+        Color {r:r, g:g, b:b, a:a}
     }
 
-    pub fn rgb(r: u8, g: u8, b: u8) -> Pixel {
-        Pixel {r:r, g:g, b:b, a:255}
+    pub fn rgb(r: u8, g: u8, b: u8) -> Color {
+        Color {r:r, g:g, b:b, a:255}
     }
 }
 
-impl std::default::Default for Pixel {
-    fn default() -> Pixel {
-        Pixel {r:0, g:0, b:0, a:0}
+impl std::default::Default for Color {
+    fn default() -> Color {
+        Color {r:0, g:0, b:0, a:0}
     }
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Image {
-    pixels: std::vec::Vec<Pixel>,
+    pixels: std::vec::Vec<Color>,
     width : usize,
     height: usize,
 }
@@ -37,7 +37,7 @@ pub struct Image {
 impl Image {
     pub fn new(w: usize, h: usize) -> Image {
         let mut v = std::vec::Vec::with_capacity(w * h);
-        v.resize(w * h, Pixel::new(0, 0, 0, 0));
+        v.resize(w * h, Color::new(0, 0, 0, 0));
         Image {
             pixels: v,
             width : w,
@@ -45,24 +45,24 @@ impl Image {
         }
     }
 
-    pub fn at    (&self, w: usize, h: usize) -> &Pixel {
+    pub fn at    (&self, w: usize, h: usize) -> &Color {
         &self.pixels[h * self.width + w]
     }
-    pub fn at_mut(&mut self, w: usize, h: usize) -> &mut Pixel {
+    pub fn at_mut(&mut self, w: usize, h: usize) -> &mut Color {
         &mut self.pixels[h * self.width + w]
     }
 
-    pub fn lines(&self) -> std::slice::ChunksExact<Pixel> {
+    pub fn lines(&self) -> std::slice::ChunksExact<Color> {
         self.pixels.chunks_exact(self.width)
     }
-    pub fn lines_mut(&mut self) -> std::slice::ChunksExactMut<Pixel> {
+    pub fn lines_mut(&mut self) -> std::slice::ChunksExactMut<Color> {
         self.pixels.chunks_exact_mut(self.width)
     }
 
-    pub fn rlines(&self) -> std::slice::RChunksExact<Pixel> {
+    pub fn rlines(&self) -> std::slice::RChunksExact<Color> {
         self.pixels.rchunks_exact(self.width)
     }
-    pub fn rlines_mut(&mut self) -> std::slice::RChunksExactMut<Pixel> {
+    pub fn rlines_mut(&mut self) -> std::slice::RChunksExactMut<Color> {
         self.pixels.rchunks_exact_mut(self.width)
     }
 
