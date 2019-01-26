@@ -1,6 +1,7 @@
 use std::arch::x86_64::_mm_load_ps;
 use std::arch::x86_64::_mm_store_ps;
 use std::arch::x86_64::_mm_set1_ps;
+use std::arch::x86_64::_mm_set_ps;
 use std::arch::x86_64::_mm_add_ps;
 use std::arch::x86_64::_mm_sub_ps;
 use std::arch::x86_64::_mm_mul_ps;
@@ -20,12 +21,39 @@ impl Vector3 {
     pub fn zero() -> Vector3 {
         Vector3{values: [0.0, 0.0, 0.0, 0.0]}
     }
-
     pub(crate) fn as_ptr(&self) -> *const f32 {
         self.values.as_ptr()
     }
     pub(crate) fn as_mut_ptr(&mut self) -> *mut f32 {
         self.values.as_mut_ptr()
+    }
+
+    pub fn len(self) -> f32 {
+        self.len_sq().sqrt()
+    }
+    pub fn len_sq(self) -> f32 {
+        self.dot(self)
+    }
+    pub fn dot(self, other: Vector3) -> f32 {
+        unsafe {
+            let mut retval = Vector3::zero();
+            _mm_store_ps(retval.as_mut_ptr(), _mm_mul_ps(
+                _mm_load_ps(self.as_ptr()), _mm_load_ps(other.as_ptr())));
+            retval[0] + retval[1] + retval[2]
+        }
+    }
+    pub fn cross(self, other: Vector3) -> Vector3 {
+         unsafe {
+            let mut v1 = Vector3::zero();
+            let mut v2 = Vector3::zero();
+            _mm_store_ps(v1.as_mut_ptr(), _mm_mul_ps(
+                _mm_set_ps(0.0,  self[1],  self[2],  self[0]),
+                _mm_set_ps(0.0, other[2], other[0], other[1])));
+            _mm_store_ps(v2.as_mut_ptr(), _mm_mul_ps(
+                _mm_set_ps(0.0,  self[2],  self[0],  self[1]),
+                _mm_set_ps(0.0, other[1], other[2], other[0])));
+            v1 - v2
+        }   
     }
 }
 

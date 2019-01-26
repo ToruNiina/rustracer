@@ -10,6 +10,21 @@ impl Vector3 {
     pub fn zero() -> Vector3 {
         Vector3{values: [0.0, 0.0, 0.0]}
     }
+
+    pub fn len(self) -> f32 {
+        self.len_sq().sqrt()
+    }
+    pub fn len_sq(self) -> f32 {
+        self.dot(self)
+    }
+    pub fn dot(self, other: Vector3) -> f32 {
+        self[0] * other[0] + self[1] * other[1] + self[2] * other[2]
+    }
+    pub fn cross(self, other: Vector3) -> Vector3 {
+        Vector3::new(self[1] * other[2] - self[2] * other[1],
+                     self[2] * other[0] - self[0] * other[2],
+                     self[0] * other[1] - self[1] * other[0])
+    }
 }
 
 impl std::ops::Index<usize> for Vector3 {

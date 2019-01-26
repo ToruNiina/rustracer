@@ -12,6 +12,7 @@ pub use self::fallback::*;
 
 #[cfg(test)]
 mod tests {
+    use std::f32;
     use crate::vector::*;
     #[test]
     fn index_3() {
@@ -105,6 +106,37 @@ mod tests {
         assert_eq!(u[0], 0.5);
         assert_eq!(u[1], 1.0);
         assert_eq!(u[2], 1.5);
+    }
+
+    #[test]
+    fn len() {
+        let u = Vector3::new(1.0, 2.0, 3.0);
+        let l = Vector3::len(u);
+        assert_eq!(l, (1.0f32 + 4.0f32 + 9.0f32).sqrt());
+    }
+    #[test]
+    fn len_sq() {
+        let u = Vector3::new(1.0, 2.0, 3.0);
+        let l = Vector3::len_sq(u);
+        assert_eq!(l, 1.0 + 4.0 + 9.0);
+    }
+
+    #[test]
+    fn dot() {
+        let u = Vector3::new(1.0, 2.0, 3.0);
+        let v = Vector3::new(2.0, 3.0, 4.0);
+        let d = Vector3::dot(u, v);
+        assert_eq!(d, 2.0 + 6.0 + 12.0);
+    }
+    #[test]
+    fn cross() {
+        let u = Vector3::new(1.0, 2.0, 3.0);
+        let v = Vector3::new(2.0, 3.0, 4.0);
+        let c = Vector3::cross(u, v);
+        let d1 = Vector3::dot(u, c);
+        let d2 = Vector3::dot(v, c);
+        assert_eq!(d1, 0.0);
+        assert_eq!(d2, 0.0);
     }
 
     #[test]
