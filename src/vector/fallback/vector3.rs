@@ -7,6 +7,9 @@ impl Vector3 {
     pub fn new(x: f32, y: f32, z: f32) -> Vector3 {
         Vector3{values: [x, y, z, 0.0]}
     }
+    pub fn zero() -> Vector3 {
+        Vector3{values: [0.0, 0.0, 0.0]}
+    }
 }
 
 impl std::ops::Index<usize> for Vector3 {
