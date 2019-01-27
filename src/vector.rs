@@ -24,6 +24,18 @@ pub fn pick_in_sphere(rng: &mut rand::rngs::ThreadRng) -> Vector3 {
 pub fn reflect(v: Vector3, n: Vector3) -> Vector3 {
     v - 2.0 * Vector3::dot(v, n) * n
 }
+/// Snell's law
+pub fn refract(v: Vector3, n: Vector3, ni_over_nt: f32) -> std::option::Option<Vector3> {
+    assert!((n.len() - 1.0).abs() < 1e-4);
+    let uv = v.unit();
+    let dt = Vector3::dot(uv, n);
+    let d  = 1.0 - ni_over_nt * ni_over_nt * (1.0 - dt * dt);
+    if d > 0.0 {
+        Some(ni_over_nt * (uv - n * dt) - n * d.sqrt());
+    } else {
+        None
+    }
+}
 
 #[cfg(test)]
 mod tests {
