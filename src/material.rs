@@ -47,8 +47,12 @@ impl Scatter for Metalic {
         -> std::option::Option<(Ray, (f32, f32, f32))> {
 
         let start = ray.at(cr.t);
-        let reflected = Vector3::unit(reflect(ray.direction, cr.normal)) +
-                        self.fuzziness * pick_in_sphere(&mut *rng);
+        let reflected = if self.fuzziness == 0.0 {
+            Vector3::unit(reflect(ray.direction, cr.normal))
+        } else {
+            Vector3::unit(reflect(ray.direction, cr.normal)) +
+                self.fuzziness * pick_in_sphere(&mut *rng)
+        };
 
         Some((Ray::new(start, reflected), self.albedo))
     }
