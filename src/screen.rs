@@ -1,5 +1,6 @@
 use crate::vector::Vector3;
-use crate::image::{Color, Image};
+use crate::world::World;
+use crate::image::Image;
 use crate::background::Background;
 
 pub struct Screen<B: Background> {
@@ -24,7 +25,7 @@ impl<B: Background> Screen<B> {
         Screen{camera, lower_left, horizontal, vertical, width, height, background}
     }
 
-    pub fn image(&self) -> Image {
+    pub fn render(&self, w: World) -> Image {
         self.background.clear(self.width, self.height)
     }
 }
