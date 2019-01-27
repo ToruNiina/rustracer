@@ -65,24 +65,37 @@ impl World {
     where
         B:Background,
     {
-        let hits = self.objects.iter()
-            .flat_map(|obj| obj.collide_within(&ray, 0.0001, std::f32::INFINITY))
-            .collect::<std::vec::Vec<_>>();
+        if depth >= 50 {
+            return Vector4::zero();
+        }
 
-        if hits.is_empty() {
-            background.color_ratio_at(ray.direction)
-        } else if depth == 50 {
-            Vector4::zero()
+        let mut nearest = None;
+        let mut min_t   = std::f32::INFINITY;
+        for obj in self.objects.iter() {
+            if let Some(collide) =
+                obj.collide_within(&ray, 0.0001, std::f32::INFINITY) {
+
+                if collide.t < min_t {
+                    min_t = collide.t;
+                    nearest = Some((obj, collide))
+                }
+            }
+        }
+
+        if let Some((nearest, collide)) = nearest {
+            if let Some((next_ray, (att_r, att_g, att_b))) =
+                nearest.scatter(ray, collide, &mut *rng) {
+                let next_color = self.color(&next_ray, background, &mut *rng, depth+1);
+
+                Vector4::new(next_color[0] * att_r,
+                             next_color[1] * att_g,
+                             next_color[2] * att_b,
+                             next_color[3])
+            } else {
+                Vector4::zero()
+            } 
         } else {
-
-            let nearest = hits.iter().min_by(
-                |lhs, rhs| lhs.t.partial_cmp(&rhs.t).unwrap_or(std::cmp::Ordering::Equal)
-                ).expect("all the t's are comparable");
-
-            let start = ray.at(nearest.t);
-            let dir   = nearest.normal + Self::pick_in_sphere(&mut *rng);
-
-            0.5 * self.color(&Ray::new(start, dir), background, &mut *rng, depth+1)
+            background.color_ratio_at(ray.direction)
         }
     }
 }
