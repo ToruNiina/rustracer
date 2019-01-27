@@ -38,7 +38,7 @@ impl World {
         World{objects}
     }
 
-    pub fn color(&self, ray: Ray) -> Vector4 {
+    pub fn color(&self, ray: &Ray) -> Vector4 {
         let mut color = Vector4::zero();
 
         let mut min_t = std::f32::INFINITY;

@@ -63,16 +63,13 @@ impl<B: Background> Screen<B> {
 
         for w in 0..self.width {
             for h in 0..self.height {
-                let (bg_r, bg_g, bg_b, bg_a) = self.background
-                    .color_ratio_at((w, self.width), (h, self.height));
-
                 let mut color = Vector4::zero();
                 for p in self.grid_at_pixel(w, h).into_iter() {
                     let ray = Ray::new(self.camera, *p - self.camera);
-                    let wld = world.color(ray);
+                    let wld = world.color(&ray);
                     if wld[0] == 0.0 && wld[1] == 0.0 &&
                        wld[2] == 0.0 && wld[3] == 0.0 {
-                        color += Vector4::new(bg_r, bg_g, bg_b, bg_a);
+                        color += self.background.color_ratio_at(ray.direction);
                     } else {
                         color += wld;
                     }
