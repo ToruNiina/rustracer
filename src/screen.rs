@@ -3,6 +3,7 @@ use crate::world::World;
 use crate::image::{Color, Image};
 use crate::ray::Ray;
 use crate::background::Background;
+use rand::Rng;
 
 pub struct Screen<B: Background> {
     camera:     Vector3,
@@ -56,20 +57,31 @@ impl<B: Background> Screen<B> {
                                 (h as f32 + 0.75) * self.rheight)
         ]
     }
+    fn random_at_pixel(&self, w: usize, h: usize, n: usize,
+                       rng: &mut rand::rngs::ThreadRng) -> std::vec::Vec<Vector3>
+    {
+        (0..n).map(|_| {
+            let u = rng.gen_range(0.0f32, 1.0f32);
+            let v = rng.gen_range(0.0f32, 1.0f32);
+            self.point_at_ratio((w as f32 + u) * self.rwidth,
+                                (h as f32 + v) * self.rheight)
+        }).collect()
+    }
 
     pub fn render(&self, world: World) -> Image {
+        const N:usize = 100;
         let mut img = Image::new(self.width, self.height);
         let mut rng = rand::thread_rng();
 
         for w in 0..self.width {
             for h in 0..self.height {
-                let color = self.grid_at_pixel(w, h).into_iter()
-                    .map(|p| world.color(&Ray::new(self.camera, *p - self.camera),
+                let color = self.random_at_pixel(w, h, N, &mut rng).into_iter()
+                    .map(|p| world.color(&Ray::new(self.camera, p - self.camera),
                                          &self.background, &mut rng))
-                    .fold(Vector4::zero(), |l, r| l + r) * 0.25;
+                    .fold(Vector4::zero(), |l, r| l + r) / N as f32;
 
                 *img.at_mut(w, h) =
-                    Color::ratio(color[0], color[1], color[2], color[3]);
+                    Color::ratio(color[0].sqrt(), color[1].sqrt(), color[2].sqrt(), color[3]);
             }
         }
         img
