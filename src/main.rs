@@ -29,11 +29,11 @@ fn main() {
 
         world::Object::make_sphere(
             vector::Vector3::new(1.0,    0.0, -1.0),   0.5,
-            material::Material::make_metalic(0.8, 0.6, 0.2)),
+            material::Material::make_metalic(0.3, 0.8, 0.6, 0.2)),
 
         world::Object::make_sphere(
             vector::Vector3::new(-1.0,   0.0, -1.0),   0.5,
-            material::Material::make_metalic(0.8, 0.8, 0.8)),
+            material::Material::make_metalic(1.0, 0.8, 0.8, 0.8)),
     ]);
 
     screen.render(world).write_ppm("example.ppm").unwrap();
