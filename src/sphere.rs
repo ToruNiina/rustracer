@@ -8,7 +8,7 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    fn new(center: Vector3, radius: f32) -> Sphere {
+    pub fn new(center: Vector3, radius: f32) -> Sphere {
         Sphere{center, radius}
     }
 }
