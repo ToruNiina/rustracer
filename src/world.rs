@@ -1,5 +1,7 @@
 use crate::sphere::Sphere;
 use crate::vector::Vector3;
+use crate::ray::Ray;
+use crate::collide::{CollideResult, Collide};
 
 pub enum Object {
     Sphere(Sphere),
@@ -8,6 +10,16 @@ pub enum Object {
 impl Object {
     pub fn make_sphere(center: Vector3, radius: f32) -> Object {
         Object::Sphere(Sphere::new(center, radius))
+    }
+}
+
+impl Collide for Object {
+    fn collide(&self, ray: &Ray) -> Option<CollideResult> {
+        match &self {
+            Object::Sphere(sph) => {
+                sph.collide(ray)
+            }
+        }
     }
 }
 
