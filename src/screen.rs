@@ -1,4 +1,4 @@
-use crate::vector::Vector3;
+use crate::vector::{Vector3, Vector4};
 use crate::world::World;
 use crate::image::{Color, Image};
 use crate::ray::Ray;
@@ -63,42 +63,23 @@ impl<B: Background> Screen<B> {
 
         for w in 0..self.width {
             for h in 0..self.height {
-                let (r, g, b, a) = self.background
+                let (bg_r, bg_g, bg_b, bg_a) = self.background
                     .color_ratio_at((w, self.width), (h, self.height));
 
-                let mut count = 0usize;
-                let mut r_sum = 0.0f32;
-                let mut g_sum = 0.0f32;
-                let mut b_sum = 0.0f32;
-                let mut a_sum = 0.0f32;
-
+                let mut color = Vector4::zero();
                 for p in self.grid_at_pixel(w, h).into_iter() {
-                    let mut color = (r, g, b, a);
-                    count += 1;
-
                     let ray = Ray::new(self.camera, *p - self.camera);
-
-                    let mut min_t = std::f32::INFINITY;
-                    for obj in world.objects.iter() {
-                        if let Some(CollideResult{t, normal}) = obj.collide(&ray) {
-                            if t < min_t {
-                                min_t = t;
-                                color = (normal[0] * 0.5 + 0.5,
-                                         normal[1] * 0.5 + 0.5,
-                                         normal[2] * 0.5 + 0.5, 1.0);
-                            }
-                        }
+                    let wld = world.color(ray);
+                    if wld[0] == 0.0 && wld[1] == 0.0 &&
+                       wld[2] == 0.0 && wld[3] == 0.0 {
+                        color += Vector4::new(bg_r, bg_g, bg_b, bg_a);
+                    } else {
+                        color += wld;
                     }
-                    r_sum += color.0;
-                    g_sum += color.1;
-                    b_sum += color.2;
-                    a_sum += color.3;
                 }
-                *img.at_mut(w, h) = Color::ratio(
-                    r_sum / count as f32,
-                    g_sum / count as f32,
-                    b_sum / count as f32,
-                    1.0);
+                color *= 0.25;
+                *img.at_mut(w, h) =
+                    Color::ratio(color[0], color[1], color[2], color[3]);
             }
         }
         img
