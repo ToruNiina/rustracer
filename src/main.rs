@@ -18,7 +18,8 @@ fn main() {
         640, 320, background::SkyBg);
 
     let world = world::World::new(vec![
-        world::Object::make_sphere(vector::Vector3::new(0.0, 0.0, -1.0), 0.5),
+        world::Object::make_sphere(vector::Vector3::new(0.0,    0.0, -1.0),   0.5),
+        world::Object::make_sphere(vector::Vector3::new(0.0, -100.5, -1.0), 100.0),
     ]);
 
     screen.render(world).write_ppm("example.ppm").unwrap();

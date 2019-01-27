@@ -45,22 +45,29 @@ impl<B: Background> Screen<B> {
     }
 
     pub fn render(&self, world: World) -> Image {
-        let mut img = self.background.clear(self.width, self.height);
+        let mut img = Image::new(self.width, self.height);
 
         for w in 0..self.width {
             for h in 0..self.height {
                 let ray = Ray::new(self.camera,
                                    self.pixel_at(w, h) - self.camera);
+                let mut color =
+                    self.background.color_at((w, self.width), (h, self.height));
+
+                let mut min_t = std::f32::INFINITY;
                 for obj in world.objects.iter() {
-                    if let Some(CollideResult{t:_, normal: n}) = obj.collide(&ray) {
-                        let clr = Color::rgb(
-                            clamp(0.5 * 256.0 * (n[0] + 1.0), 0.0, 255.0) as u8,
-                            clamp(0.5 * 256.0 * (n[1] + 1.0), 0.0, 255.0) as u8,
-                            clamp(0.5 * 256.0 * (n[2] + 1.0), 0.0, 255.0) as u8,
-                        );
-                        *img.at_mut(w, h) = clr;
+                    if let Some(CollideResult{t, normal}) = obj.collide(&ray) {
+                        if t < min_t {
+                            min_t = t;
+                            color = Color::rgb(
+                                clamp(128. * (normal[0] + 1.), 0., 255.) as u8,
+                                clamp(128. * (normal[1] + 1.), 0., 255.) as u8,
+                                clamp(128. * (normal[2] + 1.), 0., 255.) as u8,
+                            );
+                        }
                     }
                 }
+                *img.at_mut(w, h) = color;
             }
         }
         img
