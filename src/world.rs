@@ -3,34 +3,40 @@ use crate::vector::{Vector3, Vector4};
 use crate::background::Background;
 use crate::ray::Ray;
 use crate::collide::{CollideResult, Collide};
+use crate::material::{Scatter, Material};
 use rand::distributions::Distribution;
 use rand::Rng;
 
 use std::cmp::PartialOrd;
 
 pub enum Object {
-    Sphere(Sphere),
+    Sphere(Sphere, Material),
 }
 
 impl Object {
-    pub fn make_sphere(center: Vector3, radius: f32) -> Object {
-        Object::Sphere(Sphere::new(center, radius))
+    pub fn make_sphere(center: Vector3, radius: f32, mat: Material) -> Object {
+        Object::Sphere(Sphere::new(center, radius), mat)
     }
 }
 
 impl Collide for Object {
     fn collide(&self, ray: &Ray) -> Option<CollideResult> {
         match &self {
-            Object::Sphere(sph) => {
+            Object::Sphere(sph, _) => {
                 sph.collide(ray)
             }
         }
     }
 }
 
-impl std::convert::From<Sphere> for Object {
-    fn from(sph: Sphere) -> Self {
-        Object::Sphere(sph)
+impl Scatter for Object {
+    fn scatter(&self, ray: &Ray, cr: CollideResult, rng: &mut rand::rngs::ThreadRng)
+        -> std::option::Option<(Ray, (f32, f32, f32))> {
+        match &self {
+            Object::Sphere(_, mat) => {
+                mat.scatter(ray, cr, rng)
+            }
+        }
     }
 }
 
