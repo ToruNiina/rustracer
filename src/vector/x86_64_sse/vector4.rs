@@ -112,6 +112,18 @@ impl std::ops::Mul<f32> for Vector4 {
         }
     }
 }
+impl std::ops::Mul<Vector4> for f32 {
+    type Output = Vector4;
+
+    fn mul(self, other: Vector4) -> Self::Output {
+        unsafe {
+            let mut retval = Vector4::zero();
+            _mm_store_ps(retval.as_mut_ptr(), _mm_mul_ps(
+                _mm_load_ps(other.as_ptr()), _mm_set1_ps(self)));
+            return retval
+        }
+    }
+}
 
 impl std::ops::MulAssign<f32> for Vector4 {
     fn mul_assign(&mut self, other: f32) {

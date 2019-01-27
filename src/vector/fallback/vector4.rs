@@ -77,6 +77,13 @@ impl std::ops::Mul<f32> for Vector4 {
         Vector4::new(self[0]*other, self[1]*other, self[2]*other, self[3]*other)
     }
 }
+impl std::ops::Mul<Vector4> for f32 {
+    type Output = Vector4;
+
+    fn mul(self, other: Vector4) -> Self::Output {
+        Vector4::new(self*other[0], self*other[1], self*other[2], self*other[3])
+    }
+}
 
 impl std::ops::MulAssign<f32> for Vector4 {
     fn mul_assign(&mut self, other: f32) {

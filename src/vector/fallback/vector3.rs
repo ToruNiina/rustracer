@@ -91,6 +91,13 @@ impl std::ops::Mul<f32> for Vector3 {
         Vector3::new(self[0]*other, self[1]*other, self[2]*other)
     }
 }
+impl std::ops::Mul<Vector3> for f32 {
+    type Output = Vector3;
+
+    fn mul(self, other: Vector3) -> Self::Output {
+        Vector3::new(self*other[0], self*other[1], self*other[2])
+    }
+}
 
 impl std::ops::MulAssign<f32> for Vector3 {
     fn mul_assign(&mut self, other: f32) {
