@@ -31,7 +31,7 @@ pub fn refract(v: Vector3, n: Vector3, ni_over_nt: f32) -> std::option::Option<V
     let dt = Vector3::dot(uv, n);
     let d  = 1.0 - ni_over_nt * ni_over_nt * (1.0 - dt * dt);
     if d > 0.0 {
-        Some(ni_over_nt * (uv - n * dt) - n * d.sqrt());
+        Some(ni_over_nt * (uv - n * dt) - n * d.sqrt())
     } else {
         None
     }
