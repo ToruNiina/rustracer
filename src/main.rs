@@ -3,6 +3,8 @@ mod image;
 mod vector;
 mod ray;
 mod screen;
+mod sphere;
+mod collide;
 mod background;
 
 
