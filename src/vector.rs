@@ -10,6 +10,21 @@ pub mod fallback;
 #[cfg(not(target_feature = "sse"))]
 pub use self::fallback::*;
 
+use rand::distributions::Distribution;
+use rand::Rng;
+
+pub fn pick_in_sphere(rng: &mut rand::rngs::ThreadRng) -> Vector3 {
+    let u = rng.gen_range(0.0f32, 1.0f32);
+    let normal = rand::distributions::StandardNormal;
+    Vector3::unit(Vector3::new(normal.sample(&mut *rng) as f32,
+                               normal.sample(&mut *rng) as f32,
+                               normal.sample(&mut *rng) as f32)) * u.cbrt()
+}
+
+pub fn reflect(v: Vector3, n: Vector3) -> Vector3 {
+    v - 2.0 * Vector3::dot(v, n) * n
+}
+
 #[cfg(test)]
 mod tests {
     use std::f32;

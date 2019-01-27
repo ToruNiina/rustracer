@@ -1,8 +1,6 @@
-use crate::vector::{Vector3, Vector4};
+use crate::vector::*;
 use crate::collide::CollideResult;
 use crate::ray::Ray;
-use rand::distributions::Distribution;
-use rand::Rng;
 
 pub trait Scatter {
     /// returns the next ray and the attenuation of the color.
@@ -21,13 +19,6 @@ impl Diffuse {
         Diffuse{albedo: (r, g, b)}
     }
 
-    pub fn pick_in_sphere(rng: &mut rand::rngs::ThreadRng) -> Vector3 {
-        let u = rng.gen_range(0.0f32, 1.0f32);
-        let normal = rand::distributions::StandardNormal;
-        Vector3::unit(Vector3::new(normal.sample(&mut *rng) as f32,
-                                   normal.sample(&mut *rng) as f32,
-                                   normal.sample(&mut *rng) as f32)) * u.cbrt()
-    }
 }
 
 impl Scatter for Diffuse {
@@ -35,7 +26,7 @@ impl Scatter for Diffuse {
         -> std::option::Option<(Ray, (f32, f32, f32))> {
 
         let start = ray.at(cr.t);
-        let dir   = cr.normal + Self::pick_in_sphere(&mut *rng);
+        let dir   = cr.normal + pick_in_sphere(&mut *rng);
 
         Some((Ray::new(start, dir), self.albedo))
     }
@@ -49,10 +40,6 @@ impl Metalic {
     pub fn new(r: f32, g: f32, b: f32) -> Self {
         Metalic{albedo: (r, g, b)}
     }
-
-    pub fn reflect(v: Vector3, n: Vector3) -> Vector3 {
-        v - 2.0 * Vector3::dot(v, n) * n
-    }
 }
 
 impl Scatter for Metalic {
@@ -60,7 +47,7 @@ impl Scatter for Metalic {
         -> std::option::Option<(Ray, (f32, f32, f32))> {
 
         let start = ray.at(cr.t);
-        let reflected = Self::reflect(ray.direction, cr.normal);
+        let reflected = reflect(ray.direction, cr.normal);
 
         Some((Ray::new(start, reflected), self.albedo))
     }
