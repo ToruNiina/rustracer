@@ -86,7 +86,7 @@ impl Scatter for Dielectric {
 
         let (out_normal, ni_over_nt, cosine) =
             if Vector3::dot(ray.direction, cr.normal) > 0.0 {
-                (-cr.normal, self.refidx, self.refidx * ray.direction.dot(cr.normal) / ray.direction.len())
+                (-cr.normal, self.refidx, ray.direction.dot(cr.normal) / ray.direction.len())
             } else {
                 (cr.normal, 1.0 / self.refidx, -ray.direction.dot(cr.normal) / ray.direction.len())
             };
