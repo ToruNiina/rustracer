@@ -23,8 +23,11 @@ impl Collide for Sphere {
         if d < 0.0 {
             None
         } else {
-            let t = -b - d.sqrt() / (2.0 * a);
-            let n = Vector3::unit(ray.at(t) - self.center);
+            let t = (-b - d.sqrt()) / (2.0 * a);
+            if t < 0.0 {
+                return None
+            }
+            let n = (ray.at(t) - self.center) / self.radius;
             Some(CollideResult{t: t, normal: n})
         }
     }
