@@ -44,7 +44,7 @@ impl World {
     }
 
     pub fn pick_in_sphere(rng: &mut rand::rngs::ThreadRng) -> Vector3 {
-        let u = &mut rng.gen_range(0.0f32, 1.0f32);
+        let u = rng.gen_range(0.0f32, 1.0f32);
         let normal = rand::distributions::StandardNormal;
         Vector3::unit(Vector3::new(normal.sample(&mut *rng) as f32,
                                    normal.sample(&mut *rng) as f32,
