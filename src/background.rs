@@ -2,7 +2,13 @@ use crate::image::{Color, Image};
 use crate::util::clamp;
 
 pub trait Background {
-    fn color_at(&self, w: (usize, usize), h: (usize, usize)) -> Color;
+    fn color_ratio_at(&self, w: (usize, usize), h: (usize, usize))
+        -> (f32, f32, f32, f32);
+
+    fn color_at(&self, w: (usize, usize), h: (usize, usize)) -> Color {
+        let (r, g, b, a) = self.color_ratio_at(w, h);
+        Color::ratio(r, g, b, a)
+    }
 
     fn clear(&self, w: usize, h: usize) -> Image {
         let mut image = Image::new(w, h);
@@ -18,11 +24,12 @@ pub trait Background {
 pub struct SkyBg;
 
 impl Background for SkyBg {
-    fn color_at(&self, _w: (usize, usize), h: (usize, usize)) -> Color {
-        let t = h.0 as f64 / h.1 as f64;
-        let r = clamp((1.0 - t) * 256.0 + t * 128.0, 0.0, 255.0) as u8;
-        let g = clamp((1.0 - t) * 256.0 + t * 180.0, 0.0, 255.0) as u8;
-        Color::rgb(r, g, 255)
+    fn color_ratio_at(&self, _w: (usize, usize), h: (usize, usize))
+        -> (f32, f32, f32, f32)
+    {
+        let t = h.0 as f32 / h.1 as f32;
+        let u = 1.0 - t;
+        (u + 0.5 * t, u + 0.7 * t, 1.0, 1.0)
     }
 }
 
