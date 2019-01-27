@@ -3,6 +3,9 @@ use crate::vector::{Vector3, Vector4};
 use crate::background::Background;
 use crate::ray::Ray;
 use crate::collide::{CollideResult, Collide};
+use rand::distributions::Distribution;
+use rand::Rng;
+
 use std::cmp::PartialOrd;
 
 pub enum Object {
@@ -40,12 +43,23 @@ impl World {
         World{objects}
     }
 
-    pub fn color<B>(&self, ray: &Ray, background: &B) -> Vector4
+    pub fn pick_in_sphere(rng: &mut rand::rngs::ThreadRng) -> Vector3 {
+        let u = &mut rng.gen_range(0.0f32, 1.0f32);
+        let normal = rand::distributions::StandardNormal;
+        Vector3::unit(Vector3::new(normal.sample(&mut *rng) as f32,
+                                   normal.sample(&mut *rng) as f32,
+                                   normal.sample(&mut *rng) as f32)) * u.cbrt()
+    }
+
+    pub fn color<B>(&self,
+                    ray: &Ray,
+                    background: &B,
+                    rng: &mut rand::rngs::ThreadRng) -> Vector4
     where
         B:Background,
     {
         let hits = self.objects.iter()
-            .flat_map(|obj| obj.collide(&ray))
+            .flat_map(|obj| obj.collide_within(&ray, 0.0001, std::f32::INFINITY))
             .collect::<std::vec::Vec<_>>();
 
         if hits.is_empty() {
@@ -56,9 +70,10 @@ impl World {
                 |lhs, rhs| lhs.t.partial_cmp(&rhs.t).unwrap_or(std::cmp::Ordering::Equal)
                 ).expect("all the t's are comparable");
 
-            Vector4::new(nearest.normal[0] * 0.5 + 0.5,
-                         nearest.normal[1] * 0.5 + 0.5,
-                         nearest.normal[2] * 0.5 + 0.5, 1.0)
+            let start = ray.at(nearest.t);
+            let dir   = nearest.normal + Self::pick_in_sphere(&mut *rng);
+
+            0.5 * self.color(&Ray::new(start, dir), background, &mut *rng)
         }
     }
 }

@@ -2,7 +2,6 @@ use crate::vector::{Vector3, Vector4};
 use crate::world::World;
 use crate::image::{Color, Image};
 use crate::ray::Ray;
-use crate::collide::{CollideResult, Collide};
 use crate::background::Background;
 
 pub struct Screen<B: Background> {
@@ -60,12 +59,13 @@ impl<B: Background> Screen<B> {
 
     pub fn render(&self, world: World) -> Image {
         let mut img = Image::new(self.width, self.height);
+        let mut rng = rand::thread_rng();
 
         for w in 0..self.width {
             for h in 0..self.height {
                 let color = self.grid_at_pixel(w, h).into_iter()
                     .map(|p| world.color(&Ray::new(self.camera, *p - self.camera),
-                                         &self.background))
+                                         &self.background, &mut rng))
                     .fold(Vector4::zero(), |l, r| l + r) * 0.25;
 
                 *img.at_mut(w, h) =
