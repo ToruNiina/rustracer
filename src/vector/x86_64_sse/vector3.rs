@@ -34,6 +34,9 @@ impl Vector3 {
     pub fn len_sq(self) -> f32 {
         self.dot(self)
     }
+    pub fn unit(self) -> Vector3 {
+        self / self.len()
+    }
     pub fn dot(self, other: Vector3) -> f32 {
         unsafe {
             let mut retval = Vector3::zero();
@@ -53,7 +56,7 @@ impl Vector3 {
                 _mm_set_ps(0.0,  self[2],  self[0],  self[1]),
                 _mm_set_ps(0.0, other[1], other[2], other[0])));
             v1 - v2
-        }   
+        }
     }
 }
 

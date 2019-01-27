@@ -138,6 +138,12 @@ mod tests {
         assert_eq!(d1, 0.0);
         assert_eq!(d2, 0.0);
     }
+    #[test]
+    fn unit() {
+        let u = Vector3::new(1.0, 2.0, 3.0);
+        let n = Vector3::unit(u);
+        assert!((n.len() - 1.0).abs() < 1e-4 );
+    }
 
     #[test]
     fn index_4() {

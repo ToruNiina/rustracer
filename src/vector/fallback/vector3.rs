@@ -17,6 +17,9 @@ impl Vector3 {
     pub fn len_sq(self) -> f32 {
         self.dot(self)
     }
+    pub fn unit(self) -> Vector3 {
+        self / self.len()
+    }
     pub fn dot(self, other: Vector3) -> f32 {
         self[0] * other[0] + self[1] * other[1] + self[2] * other[2]
     }
