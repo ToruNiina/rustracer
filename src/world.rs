@@ -54,7 +54,8 @@ impl World {
     pub fn color<B>(&self,
                     ray: &Ray,
                     background: &B,
-                    rng: &mut rand::rngs::ThreadRng) -> Vector4
+                    rng: &mut rand::rngs::ThreadRng,
+                    depth: usize) -> Vector4
     where
         B:Background,
     {
@@ -64,6 +65,8 @@ impl World {
 
         if hits.is_empty() {
             background.color_ratio_at(ray.direction)
+        } else if depth == 50 {
+            Vector4::zero()
         } else {
 
             let nearest = hits.iter().min_by(
@@ -73,7 +76,7 @@ impl World {
             let start = ray.at(nearest.t);
             let dir   = nearest.normal + Self::pick_in_sphere(&mut *rng);
 
-            0.5 * self.color(&Ray::new(start, dir), background, &mut *rng)
+            0.5 * self.color(&Ray::new(start, dir), background, &mut *rng, depth+1)
         }
     }
 }

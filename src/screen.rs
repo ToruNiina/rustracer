@@ -37,6 +37,7 @@ impl<B: Background> Screen<B> {
                background}
     }
 
+
     fn point_at_ratio(&self, w: f32, h: f32) -> Vector3 {
         self.lower_left + w * self.horizontal + h * self.vertical
     }
@@ -77,7 +78,7 @@ impl<B: Background> Screen<B> {
             for h in 0..self.height {
                 let color = self.random_at_pixel(w, h, N, &mut rng).into_iter()
                     .map(|p| world.color(&Ray::new(self.camera, p - self.camera),
-                                         &self.background, &mut rng))
+                                         &self.background, &mut rng, 0))
                     .fold(Vector4::zero(), |l, r| l + r) / N as f32;
 
                 *img.at_mut(w, h) =
