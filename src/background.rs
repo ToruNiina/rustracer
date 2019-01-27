@@ -1,4 +1,5 @@
 use crate::image::{Color, Image};
+use crate::util::clamp;
 
 pub trait Background {
     fn color_at(&self, w: (usize, usize), h: (usize, usize)) -> Color;
@@ -25,6 +26,3 @@ impl Background for SkyBg {
     }
 }
 
-fn clamp(x: f64, min: f64, max: f64) -> f64 {
-    if x < min { min } else if x > max { max } else { x }
-}
