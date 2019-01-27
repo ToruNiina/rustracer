@@ -63,18 +63,11 @@ impl<B: Background> Screen<B> {
 
         for w in 0..self.width {
             for h in 0..self.height {
-                let mut color = Vector4::zero();
-                for p in self.grid_at_pixel(w, h).into_iter() {
-                    let ray = Ray::new(self.camera, *p - self.camera);
-                    let wld = world.color(&ray);
-                    if wld[0] == 0.0 && wld[1] == 0.0 &&
-                       wld[2] == 0.0 && wld[3] == 0.0 {
-                        color += self.background.color_ratio_at(ray.direction);
-                    } else {
-                        color += wld;
-                    }
-                }
-                color *= 0.25;
+                let color = self.grid_at_pixel(w, h).into_iter()
+                    .map(|p| world.color(&Ray::new(self.camera, *p - self.camera),
+                                         &self.background))
+                    .fold(Vector4::zero(), |l, r| l + r) * 0.25;
+
                 *img.at_mut(w, h) =
                     Color::ratio(color[0], color[1], color[2], color[3]);
             }

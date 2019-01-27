@@ -1,7 +1,9 @@
 use crate::sphere::Sphere;
 use crate::vector::{Vector3, Vector4};
+use crate::background::Background;
 use crate::ray::Ray;
 use crate::collide::{CollideResult, Collide};
+use std::cmp::PartialOrd;
 
 pub enum Object {
     Sphere(Sphere),
@@ -38,20 +40,25 @@ impl World {
         World{objects}
     }
 
-    pub fn color(&self, ray: &Ray) -> Vector4 {
-        let mut color = Vector4::zero();
+    pub fn color<B>(&self, ray: &Ray, background: &B) -> Vector4
+    where
+        B:Background,
+    {
+        let hits = self.objects.iter()
+            .flat_map(|obj| obj.collide(&ray))
+            .collect::<std::vec::Vec<_>>();
 
-        let mut min_t = std::f32::INFINITY;
-        for obj in self.objects.iter() {
-            if let Some(CollideResult{t, normal}) = obj.collide(&ray) {
-                if t < min_t {
-                    min_t = t;
-                    color = Vector4::new(normal[0] * 0.5 + 0.5,
-                                         normal[1] * 0.5 + 0.5,
-                                         normal[2] * 0.5 + 0.5, 1.0);
-                }
-            }
+        if hits.is_empty() {
+            background.color_ratio_at(ray.direction)
+        } else {
+
+            let nearest = hits.iter().min_by(
+                |lhs, rhs| lhs.t.partial_cmp(&rhs.t).unwrap_or(std::cmp::Ordering::Equal)
+                ).expect("all the t's are comparable");
+
+            Vector4::new(nearest.normal[0] * 0.5 + 0.5,
+                         nearest.normal[1] * 0.5 + 0.5,
+                         nearest.normal[2] * 0.5 + 0.5, 1.0)
         }
-        color
     }
 }
