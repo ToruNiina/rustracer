@@ -57,7 +57,7 @@ impl World {
     where
         B:Background,
     {
-        if depth >= 50 {
+        if depth >= 100 {
             return Vector4::zero();
         }
 
@@ -85,7 +85,7 @@ impl World {
                              next_color[3])
             } else {
                 Vector4::zero()
-            } 
+            }
         } else {
             background.color_ratio_at(ray.direction)
         }
