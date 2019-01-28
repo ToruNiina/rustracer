@@ -5,11 +5,12 @@ use crate::collide::{Collision, Collide};
 pub struct Sphere {
     center: Vector3,
     radius: f32,
+    rradius: f32,
 }
 
 impl Sphere {
     pub fn new(center: Vector3, radius: f32) -> Sphere {
-        Sphere{center, radius}
+        Sphere{center, radius, rradius: 1.0 / radius}
     }
 }
 
@@ -25,13 +26,13 @@ impl Collide for Sphere {
 
         let t = (-b - sqrt_d) * 0.5;
         if t_min <= t && t <= t_max {
-            let normal = (ray.at(t) - self.center) / self.radius;
+            let normal = (ray.at(t) - self.center) * self.rradius;
             return Some(Collision{t, normal})
         }
 
         let t = (-b + sqrt_d) * 0.5;
         if t_min <= t && t <= t_max {
-            let normal = (ray.at(t) - self.center) / self.radius;
+            let normal = (ray.at(t) - self.center) * self.rradius;
             return Some(Collision{t, normal})
         }
         None
