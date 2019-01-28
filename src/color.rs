@@ -51,6 +51,26 @@ impl RGB {
         RGB {colors: [r, g, b, 0.0]}
     }
 
+    #[cfg(target_feature = "sse")]
+    pub fn sqrt(&self) -> Self {
+        use std::arch::x86_64::_mm_load_ps;
+        use std::arch::x86_64::_mm_store_ps;
+        use std::arch::x86_64::_mm_sqrt_ps;
+        let mut retval = RGB::new(0.0, 0.0, 0.0);
+        unsafe {
+            _mm_store_ps(retval.as_mut_ptr(),
+                _mm_sqrt_ps(_mm_load_ps(self.as_ptr())));
+        }
+        return retval;
+    }
+
+    #[cfg(not(target_feature = "sse"))]
+    pub fn sqrt(&self) -> Self {
+        RGB::new(self.r() + other.r(),
+                 self.g() + other.g(),
+                 self.b() + other.b())
+    }
+
     // private method to use SIMD is possible
     fn as_ptr(&self) -> *const f32 {
         self.colors.as_ptr()
@@ -466,5 +486,14 @@ mod tests {
             assert_eq!(u.g(), 2.0 / 10.0);
             assert_eq!(u.b(), 3.0 / 10.0);
         }
+    }
+
+    #[test]
+    fn sqrt() {
+        let u = RGB::new(1.0, 2.0, 3.0);
+        let v = u.sqrt();
+        assert_eq!(v.r(), 1.0f32.sqrt());
+        assert_eq!(v.g(), 2.0f32.sqrt());
+        assert_eq!(v.b(), 3.0f32.sqrt());
     }
 }

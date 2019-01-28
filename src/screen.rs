@@ -125,10 +125,7 @@ impl<B: Background> Screen<B> {
                     .map(|ray| world.color(&ray, &self.background, &mut rng, 0).0)
                     .fold(RGB::new(0.0, 0.0, 0.0), |l, r| l + r) / (N as f32);
 
-                *img.at_mut(w, h) = std::convert::From::from(
-                        RGB::new(color.r().sqrt(),
-                                 color.g().sqrt(),
-                                 color.b().sqrt()));
+                *img.at_mut(w, h) = std::convert::From::from(color.sqrt());
             }
         }
         img
