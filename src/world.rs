@@ -1,14 +1,10 @@
 use crate::sphere::Sphere;
 use crate::vector::Vector3;
-use crate::color::{Color, RGBA, RGB};
+use crate::color::RGB;
 use crate::background::Background;
 use crate::ray::Ray;
 use crate::collide::{CollideResult, Collide};
 use crate::material::{Scatter, Material};
-use rand::distributions::Distribution;
-use rand::Rng;
-
-use std::cmp::PartialOrd;
 
 pub enum Object {
     Sphere(Sphere, Material),
@@ -77,7 +73,7 @@ impl World {
 
         if let Some((nearest, collide)) = nearest {
             if let Some((next_ray, att)) = nearest.scatter(ray, collide, rng) {
-                att * self.color(&next_ray, background, &mut *rng, depth+1)
+                att * self.color(&next_ray, background, rng, depth+1)
             } else {
                 RGB::new(0.0, 0.0, 0.0)
             }
