@@ -14,3 +14,11 @@ impl Background for SkyBg {
     }
 }
 
+pub struct UniBg{
+    color: RGB,
+}
+impl Background for UniBg {
+    fn color_at(&self, _: Vector3) -> RGB {
+        self.color
+    }
+}
