@@ -5,6 +5,7 @@ use crate::background::Background;
 use crate::ray::Ray;
 use crate::collide::{CollideResult, Collide};
 use crate::material::{Scatter, Material};
+use rand::Rng;
 
 pub enum Object {
     Sphere(Sphere, Material),
@@ -27,7 +28,7 @@ impl Collide for Object {
 }
 
 impl Scatter for Object {
-    fn scatter(&self, ray: &Ray, cr: CollideResult, rng: &mut rand::rngs::ThreadRng)
+    fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
         -> std::option::Option<(Ray, RGB)> {
         match &self {
             Object::Sphere(_, mat) => {
@@ -47,13 +48,10 @@ impl World {
     }
 
     /// returns color & depth of the recursion.
-    pub fn color<B>(&self,
-                    ray: &Ray,
-                    background: &B,
-                    rng: &mut rand::rngs::ThreadRng,
-                    depth: usize) -> (RGB, usize)
+    pub fn color<B, R>(&self, ray: &Ray, bg: &B, rng: &mut R, depth: usize) -> (RGB, usize)
     where
-        B:Background,
+        B: Background,
+        R: Rng
     {
         if depth >= 100 {
             return (RGB::new(0.0, 0.0, 0.0), 100)
@@ -74,13 +72,13 @@ impl World {
 
         if let Some((nearest, collide)) = nearest {
             if let Some((next_ray, att)) = nearest.scatter(ray, collide, rng) {
-                let (c, d) = self.color(&next_ray, background, rng, depth+1);
+                let (c, d) = self.color(&next_ray, bg, rng, depth+1);
                 (att * c, d)
             } else {
                 (RGB::new(0.0, 0.0, 0.0), depth)
             }
         } else {
-            (From::from(background.color_at(ray.direction)), depth)
+            (From::from(bg.color_at(ray.direction)), depth)
         }
     }
 }

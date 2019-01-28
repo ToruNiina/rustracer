@@ -13,15 +13,15 @@ pub use self::fallback::*;
 use rand::distributions::Distribution;
 use rand::Rng;
 
-pub fn pick_in_sphere(rng: &mut rand::rngs::ThreadRng) -> Vector3 {
+pub fn pick_in_sphere<R: Rng>(rng: &mut R) -> Vector3 {
     let u = rng.gen_range(0.0f32, 1.0f32);
     let normal = rand::distributions::StandardNormal;
-    Vector3::unit(Vector3::new(normal.sample(&mut *rng) as f32,
-                               normal.sample(&mut *rng) as f32,
-                               normal.sample(&mut *rng) as f32)) * u.cbrt()
+    Vector3::unit(Vector3::new(normal.sample(rng) as f32,
+                               normal.sample(rng) as f32,
+                               normal.sample(rng) as f32)) * u.cbrt()
 }
 
-pub fn pick_in_circle(rng: &mut rand::rngs::ThreadRng) -> (f32, f32) {
+pub fn pick_in_circle<R: Rng>(rng: &mut R) -> (f32, f32) {
     let a = rng.gen_range(0.0f32, 1.0f32) * 2.0 * std::f32::consts::PI;
     let r = rng.gen_range(0.0f32, 1.0f32).sqrt();
     (r * a.cos(), r * a.sin())

@@ -4,6 +4,7 @@ use crate::image::Image;
 use crate::color::{Color, RGB};
 use crate::ray::Ray;
 use crate::background::Background;
+use rand_core::SeedableRng;
 use rand::Rng;
 
 pub struct Screen<B: Background> {
@@ -96,8 +97,8 @@ impl<B: Background> Screen<B> {
 //         }).collect()
 //     }
 
-    fn ray_through_lens(&self, w: usize, h: usize, n: usize,
-                        rng: &mut rand::rngs::ThreadRng) -> std::vec::Vec<Ray>
+    fn ray_through_lens<R: Rng>(&self, w: usize, h: usize, n: usize, rng: &mut R)
+        -> std::vec::Vec<Ray>
     {
         (0..n).map(|_| {
             let (cx, cy) = pick_in_circle(rng);
@@ -117,7 +118,8 @@ impl<B: Background> Screen<B> {
     pub fn render(&self, world: World) -> Image {
         const N:usize = 100;
         let mut img = Image::new(self.width, self.height);
-        let mut rng = rand::thread_rng();
+        let mut rng = rand_xoshiro::Xoshiro256StarStar::from_rng(
+            rand_os::OsRng::new().unwrap()).unwrap();
 
         for w in 0..self.width {
             for h in 0..self.height {
