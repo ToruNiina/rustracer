@@ -53,9 +53,9 @@ impl World {
         B: Background,
         R: Rng
     {
-        const depth_limit: usize = 100;
-        if depth >= depth_limit {
-            return (RGB::new(0.0, 0.0, 0.0), depth_limit);
+        const DEPTH_LIMIT: usize = 100;
+        if depth >= DEPTH_LIMIT {
+            return (RGB::new(0.0, 0.0, 0.0), DEPTH_LIMIT);
         }
 
         let mut nearest = None;
