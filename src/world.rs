@@ -14,12 +14,13 @@ pub enum Shape {
 pub struct Object {
     shape:    Shape,
     albedo:   RGB,
+    emission: RGB,
     material: Material,
 }
 
 impl Object {
-    pub fn make_sphere(sphere: Sphere, material: Material, albedo: RGB) -> Object {
-        Object{shape: Shape::Sphere(sphere), albedo, material}
+    pub fn make_sphere(sphere: Sphere, material: Material, albedo: RGB, emission: RGB) -> Object {
+        Object{shape: Shape::Sphere(sphere), albedo, emission, material}
     }
 }
 
@@ -73,7 +74,7 @@ impl<Bg: Background> World<Bg> {
         if let Some((nearest, collide)) = nearest {
             let next_ray = nearest.scatter(&ray, collide, rng);
             let (c, d)   = self.color(next_ray, rng, depth+1);
-            (nearest.albedo * c, d)
+            (nearest.emission + nearest.albedo * c, d)
         } else {
             (self.bg.color_at(ray.direction), depth)
         }
