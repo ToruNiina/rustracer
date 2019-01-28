@@ -6,6 +6,9 @@ pub trait Background {
 }
 
 pub struct SkyBg;
+impl SkyBg {
+    pub fn new() -> Self {SkyBg}
+}
 impl Background for SkyBg {
     fn color_at(&self, dir: Vector3) -> RGB {
         let t = dir.unit()[1] * 0.5 + 0.5;
@@ -16,6 +19,11 @@ impl Background for SkyBg {
 
 pub struct UniBg{
     color: RGB,
+}
+impl UniBg {
+    pub fn new(color: RGB) -> Self {
+        UniBg{color}
+    }
 }
 impl Background for UniBg {
     fn color_at(&self, _: Vector3) -> RGB {
