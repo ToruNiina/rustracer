@@ -21,6 +21,13 @@ pub fn pick_in_sphere(rng: &mut rand::rngs::ThreadRng) -> Vector3 {
                                normal.sample(&mut *rng) as f32)) * u.cbrt()
 }
 
+pub fn pick_in_circle(rng: &mut rand::rngs::ThreadRng) -> (f32, f32) {
+    let a = rng.gen_range(0.0f32, 1.0f32) * 2.0 * std::f32::consts::PI;
+    let r = rng.gen_range(0.0f32, 1.0f32).sqrt();
+    (r * a.cos(), r * a.sin())
+}
+
+
 pub fn reflect(v: Vector3, n: Vector3) -> Vector3 {
     v - 2.0 * Vector3::dot(v, n) * n
 }
