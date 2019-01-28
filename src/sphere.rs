@@ -19,16 +19,16 @@ impl Collide for Sphere {
         let a  = ray.direction.len_sq();
         let b  = 2.0 * Vector3::dot(oc, ray.direction);
         let c  = oc.len_sq() - self.radius * self.radius;
-        let d = b * b - 4.0 * a * c;
-        if d < 0.0 {
-            None
-        } else {
-            let t = (-b - d.sqrt()) / (2.0 * a);
-            if t < 0.0 {
-                return None
-            }
-            let n = (ray.at(t) - self.center) / self.radius;
-            Some(CollideResult{t: t, normal: n})
-        }
+        let d  = b * b - 4.0 * a * c;
+
+        if d < 0.0 {return None;}
+
+        let sqrt_d = d.sqrt();
+        let t = if      -b - sqrt_d > 0.0 {(-b - sqrt_d) / (2.0 * a)}
+                else if -b + sqrt_d > 0.0 {(-b + sqrt_d) / (2.0 * a)}
+                else {return None};
+        let normal = (ray.at(t) - self.center) / self.radius;
+
+        Some(CollideResult{t, normal})
     }
 }
