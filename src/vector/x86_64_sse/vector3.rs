@@ -33,19 +33,23 @@ impl Vector3 {
     }
 
     pub fn len(self) -> f32 {
-        let lsq = self.len_sq();
-        unsafe {
-            lsq * _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(lsq)))
-        }
+        self.len_sq().sqrt()
+//         XXX this code causes wierd image.
+//         let lsq = self.len_sq();
+//         unsafe {
+//             lsq * _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(lsq)))
+//         }
     }
     pub fn len_sq(self) -> f32 {
         self.dot(self)
     }
     pub fn rlen(self) -> f32 {
-        let lsq = self.len_sq();
-        unsafe {
-            _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(lsq)))
-        }
+        1.0 / self.len()
+//         XXX this code causes wierd image.
+//         let lsq = self.len_sq();
+//         unsafe {
+//             _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(lsq)))
+//         }
     }
     pub fn unit(self) -> Vector3 {
         self * self.rlen()
