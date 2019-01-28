@@ -15,7 +15,9 @@ fn main() {
         /* camera position  */ vector::Vector3::new(-2.0,  2.0,  1.0),
         /* camera direction */ vector::Vector3::new( 2.0, -2.0, -2.0),
         /* camera view-up   */ vector::Vector3::new( 0.0,  1.0,  0.0),
-        /* vertical angle of view */ 90.0,
+        /* vertical angle of view */ 30.0,
+        /* diameter of aperture   */ 0.5,
+        /* focus distance         */ vector::Vector3::new( 2.0, -2.0, -2.0).len(),
         640, 320, background::SkyBg);
 
     let world = world::World::new(vec![
