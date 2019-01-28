@@ -51,9 +51,9 @@ impl Scatter for Metalic {
 
         let start = ray.at(cr.t);
         let reflected = if self.fuzziness == 0.0 {
-            Vector3::unit(reflect(ray.direction, cr.normal))
+            reflect(ray.direction, cr.normal)
         } else {
-            Vector3::unit(reflect(ray.direction, cr.normal)) +
+            reflect(ray.direction, cr.normal) +
                 self.fuzziness * pick_in_sphere(&mut *rng)
         };
 
@@ -87,9 +87,9 @@ impl Scatter for Dielectric {
 
         let (out_normal, ni_over_nt, cosine) =
             if Vector3::dot(ray.direction, cr.normal) > 0.0 {
-                (-cr.normal, self.refidx, ray.direction.dot(cr.normal) / ray.direction.len())
+                (-cr.normal,       self.refidx,  ray.direction.dot(cr.normal))
             } else {
-                (cr.normal, 1.0 / self.refidx, -ray.direction.dot(cr.normal) / ray.direction.len())
+                ( cr.normal, 1.0 / self.refidx, -ray.direction.dot(cr.normal))
             };
 
         let reflected = reflect(ray.direction, cr.normal);

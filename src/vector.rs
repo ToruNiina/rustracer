@@ -47,6 +47,14 @@ pub fn refract(v: Vector3, n: Vector3, ni_over_nt: f32) -> std::option::Option<V
 mod tests {
     use crate::vector::*;
     #[test]
+    fn len_reflected() {
+        let u = Vector3::new(1.0, 2.0, 3.0).unit();
+        let v = Vector3::new(2.0, 3.0, 4.0).unit();
+        let w = reflect(u, v);
+        assert!((w.len() - 1.0).abs() < 3.0 / 4096.0);
+    }
+
+    #[test]
     fn index_3() {
         let v = Vector3::new(1.0, 2.0, 3.0);
         assert_eq!(v[0], 1.0);
