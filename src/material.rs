@@ -1,4 +1,5 @@
 use crate::vector::*;
+use crate::color::RGB;
 use crate::collide::CollideResult;
 use crate::ray::Ray;
 use crate::util::*;
@@ -7,23 +8,23 @@ use rand::Rng;
 pub trait Scatter {
     /// returns the next ray and the attenuation of the color.
     fn scatter(&self, ray: &Ray, cr: CollideResult, rng: &mut rand::rngs::ThreadRng)
-        -> std::option::Option<(Ray, (f32, f32, f32))>;
+        -> std::option::Option<(Ray, RGB)>;
 }
 
 #[derive(Debug)]
 pub struct Diffuse {
-    albedo: (f32, f32, f32),
+    albedo: RGB,
 }
 
 impl Diffuse {
     pub fn new(r: f32, g: f32, b: f32) -> Self {
-        Diffuse{albedo: (r, g, b)}
+        Diffuse{albedo: RGB::new(r, g, b)}
     }
 }
 
 impl Scatter for Diffuse {
     fn scatter(&self, ray: &Ray, cr: CollideResult, rng: &mut rand::rngs::ThreadRng)
-        -> std::option::Option<(Ray, (f32, f32, f32))> {
+        -> std::option::Option<(Ray, RGB)> {
 
         let start = ray.at(cr.t);
         let dir   = cr.normal + pick_in_sphere(&mut *rng);
@@ -35,18 +36,18 @@ impl Scatter for Diffuse {
 #[derive(Debug)]
 pub struct Metalic {
     fuzziness: f32,
-    albedo: (f32, f32, f32),
+    albedo: RGB,
 }
 
 impl Metalic {
     pub fn new(fuzziness: f32, r: f32, g: f32, b: f32) -> Self {
-        Metalic{fuzziness: clamp(fuzziness, 0.0, 1.0), albedo: (r, g, b)}
+        Metalic{fuzziness: clamp(fuzziness, 0.0, 1.0), albedo: RGB::new(r, g, b)}
     }
 }
 
 impl Scatter for Metalic {
     fn scatter(&self, ray: &Ray, cr: CollideResult, rng: &mut rand::rngs::ThreadRng)
-        -> std::option::Option<(Ray, (f32, f32, f32))> {
+        -> std::option::Option<(Ray, RGB)> {
 
         let start = ray.at(cr.t);
         let reflected = if self.fuzziness == 0.0 {
@@ -63,12 +64,12 @@ impl Scatter for Metalic {
 #[derive(Debug)]
 pub struct Dielectric {
     refidx: f32,
-    albedo: (f32, f32, f32),
+    albedo: RGB,
 }
 
 impl Dielectric {
     pub fn new(refidx: f32, r: f32, g: f32, b: f32) -> Self {
-        Dielectric{refidx, albedo: (r, g, b)}
+        Dielectric{refidx, albedo: RGB::new(r, g, b)}
     }
 
     pub fn schlick(&self, cosine: f32) -> f32 {
@@ -80,7 +81,7 @@ impl Dielectric {
 
 impl Scatter for Dielectric {
     fn scatter(&self, ray: &Ray, cr: CollideResult, rng: &mut rand::rngs::ThreadRng)
-        -> std::option::Option<(Ray, (f32, f32, f32))> {
+        -> std::option::Option<(Ray, RGB)> {
 
         let start = ray.at(cr.t);
 
@@ -124,7 +125,7 @@ impl Material {
 
 impl Scatter for Material {
     fn scatter(&self, ray: &Ray, cr: CollideResult, rng: &mut rand::rngs::ThreadRng)
-        -> std::option::Option<(Ray, (f32, f32, f32))> {
+        -> std::option::Option<(Ray, RGB)> {
         match self {
             Material::Diffuse(mt)    => {mt.scatter(ray, cr, rng)}
             Material::Metalic(mt)    => {mt.scatter(ray, cr, rng)}

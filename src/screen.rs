@@ -1,6 +1,7 @@
-use crate::vector::{Vector3, Vector4, pick_in_circle};
+use crate::vector::{Vector3, pick_in_circle};
 use crate::world::World;
-use crate::image::{Color, Image};
+use crate::image::Image;
+use crate::color::{Color, RGBA, RGB};
 use crate::ray::Ray;
 use crate::background::Background;
 use rand::Rng;
@@ -122,10 +123,12 @@ impl<B: Background> Screen<B> {
             for h in 0..self.height {
                 let color = self.ray_through_lens(w, h, N, &mut rng).into_iter()
                     .map(|ray| world.color(&ray, &self.background, &mut rng, 0))
-                    .fold(Vector4::zero(), |l, r| l + r) / (N as f32);
+                    .fold(RGB::new(0.0, 0.0, 0.0), |l, r| l + r) / (N as f32);
 
-                *img.at_mut(w, h) =
-                    Color::ratio(color[0].sqrt(), color[1].sqrt(), color[2].sqrt(), color[3]);
+                *img.at_mut(w, h) = std::convert::From::from(
+                        RGB::new(color.r().sqrt(),
+                                 color.g().sqrt(),
+                                 color.b().sqrt()));
             }
         }
         img

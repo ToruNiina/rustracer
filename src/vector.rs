@@ -46,7 +46,6 @@ pub fn refract(v: Vector3, n: Vector3, ni_over_nt: f32) -> std::option::Option<V
 
 #[cfg(test)]
 mod tests {
-    use std::f32;
     use crate::vector::*;
     #[test]
     fn index_3() {

@@ -9,6 +9,7 @@ mod collide;
 mod material;
 mod background;
 mod world;
+mod color;
 
 fn main() {
     let screen = screen::Screen::new(

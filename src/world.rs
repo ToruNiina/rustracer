@@ -1,5 +1,6 @@
 use crate::sphere::Sphere;
-use crate::vector::{Vector3, Vector4};
+use crate::vector::Vector3;
+use crate::color::{Color, RGBA, RGB};
 use crate::background::Background;
 use crate::ray::Ray;
 use crate::collide::{CollideResult, Collide};
@@ -31,7 +32,7 @@ impl Collide for Object {
 
 impl Scatter for Object {
     fn scatter(&self, ray: &Ray, cr: CollideResult, rng: &mut rand::rngs::ThreadRng)
-        -> std::option::Option<(Ray, (f32, f32, f32))> {
+        -> std::option::Option<(Ray, RGB)> {
         match &self {
             Object::Sphere(_, mat) => {
                 mat.scatter(ray, cr, rng)
@@ -53,12 +54,12 @@ impl World {
                     ray: &Ray,
                     background: &B,
                     rng: &mut rand::rngs::ThreadRng,
-                    depth: usize) -> Vector4
+                    depth: usize) -> RGB
     where
         B:Background,
     {
         if depth >= 100 {
-            return Vector4::zero();
+            return RGB::new(0.0, 0.0, 0.0)
         }
 
         let mut nearest = None;
@@ -75,19 +76,13 @@ impl World {
         }
 
         if let Some((nearest, collide)) = nearest {
-            if let Some((next_ray, (att_r, att_g, att_b))) =
-                nearest.scatter(ray, collide, &mut *rng) {
-                let next_color = self.color(&next_ray, background, &mut *rng, depth+1);
-
-                Vector4::new(next_color[0] * att_r,
-                             next_color[1] * att_g,
-                             next_color[2] * att_b,
-                             next_color[3])
+            if let Some((next_ray, att)) = nearest.scatter(ray, collide, rng) {
+                att * self.color(&next_ray, background, &mut *rng, depth+1)
             } else {
-                Vector4::zero()
+                RGB::new(0.0, 0.0, 0.0)
             }
         } else {
-            background.color_ratio_at(ray.direction)
+            From::from(background.color_at(ray.direction))
         }
     }
 }
