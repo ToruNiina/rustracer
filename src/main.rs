@@ -12,7 +12,10 @@ mod world;
 
 fn main() {
     let screen = screen::Screen::new(
-        vector::Vector3::new( 0.0,  0.0,  0.0), /* vertical angle of view */ 90.0,
+        /* camera position  */ vector::Vector3::new(-2.0,  2.0,  1.0),
+        /* camera direction */ vector::Vector3::new( 2.0, -2.0, -2.0),
+        /* camera view-up   */ vector::Vector3::new( 0.0,  1.0,  0.0),
+        /* vertical angle of view */ 90.0,
         640, 320, background::SkyBg);
 
     let world = world::World::new(vec![

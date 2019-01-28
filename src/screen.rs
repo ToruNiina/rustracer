@@ -19,20 +19,25 @@ pub struct Screen<B: Background> {
 
 impl<B: Background> Screen<B> {
     pub fn new(camera:     Vector3,
+               direction:  Vector3,
+               view_up:    Vector3,
                vertical_fov: f32,
                width:      usize,
                height:     usize,
                background: B) -> Screen<B> {
-        assert_eq!(camera, Vector3::zero());
 
         let aspect_ratio = width as f32 / height as f32;
         let theta        = vertical_fov * std::f32::consts::PI / 180.0;
         let half_height  = (theta * 0.5).tan();
         let half_width   = half_height * aspect_ratio;
 
-        let lower_left = Vector3::new(-half_width, -half_height, -1.0);
-        let horizontal = Vector3::new(2.0 * half_width, 0.0, 0.0);
-        let vertical   = Vector3::new(0.0, 2.0 * half_height, 0.0);
+        let w = -Vector3::unit(direction);
+        let u =  Vector3::unit(Vector3::cross(view_up, w));
+        let v =  Vector3::cross(w, u);
+
+        let lower_left = camera - half_width * u - half_height * v - w;
+        let horizontal = 2.0 * half_width  * u;
+        let vertical   = 2.0 * half_height * v;
 
         Screen{camera,
                lower_left,
