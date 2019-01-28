@@ -21,11 +21,11 @@ mod tests {
     #[test]
     fn point_at() {
         let ori = Vector3::new(1.0, 1.0, 1.0);
-        let dir = Vector3::new(1.0, 2.0, 3.0);
+        let dir = Vector3::new(1.0, 2.0, 3.0).unit();
         let ray = Ray::new(ori, dir);
         let p   = ray.at(0.5);
-        assert_eq!(p[0], 1.5);
-        assert_eq!(p[1], 2.0);
-        assert_eq!(p[2], 2.5);
+        assert!((p[0] - (ori[0] + dir[0] * 0.5)).abs() < 3.0 / 4096.0);
+        assert!((p[1] - (ori[1] + dir[1] * 0.5)).abs() < 3.0 / 4096.0);
+        assert!((p[2] - (ori[2] + dir[2] * 0.5)).abs() < 3.0 / 4096.0);
     }
 }
