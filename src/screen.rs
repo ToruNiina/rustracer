@@ -121,7 +121,7 @@ impl Screen {
         for w in 0..self.width {
             for h in 0..self.height {
                 let color = self.ray_through_lens(w, h, N, &mut rng).into_iter()
-                    .map(|ray| world.color(&ray, &mut rng, 0).0)
+                    .map(|ray| world.color(ray, &mut rng, 0).0)
                     .fold(RGB::new(0.0, 0.0, 0.0), |l, r| l + r) / (N as f32);
 
                 *img.at_mut(w, h) = std::convert::From::from(color.sqrt());
