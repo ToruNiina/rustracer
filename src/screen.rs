@@ -118,7 +118,7 @@ impl<B: Background> Screen<B> {
     pub fn render(&self, world: World) -> Image {
         const N:usize = 100;
         let mut img = Image::new(self.width, self.height);
-        let mut rng = rand_xoshiro::Xoshiro256StarStar::from_rng(
+        let mut rng = rand_xorshift::XorShiftRng::from_rng(
             rand_os::OsRng::new().unwrap()).unwrap();
 
         for w in 0..self.width {
