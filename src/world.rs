@@ -29,7 +29,7 @@ impl Collide for Object {
 
 impl Scatter for Object {
     fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
-        -> std::option::Option<(Ray, RGB)> {
+        -> (Ray, RGB) {
         match &self {
             Object::Sphere(_, mat) => {
                 mat.scatter(ray, cr, rng)
@@ -72,12 +72,9 @@ impl<Bg: Background> World<Bg> {
         }
 
         if let Some((nearest, collide)) = nearest {
-            if let Some((next_ray, att)) = nearest.scatter(ray, collide, rng) {
-                let (c, d) = self.color(&next_ray, rng, depth+1);
-                (att * c, d)
-            } else {
-                (RGB::new(0.0, 0.0, 0.0), depth)
-            }
+            let (next_ray, att) = nearest.scatter(ray, collide, rng);
+            let (c, d)          = self.color(&next_ray, rng, depth+1);
+            (att * c, d)
         } else {
             (self.bg.color_at(ray.direction), depth)
         }

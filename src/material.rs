@@ -7,8 +7,7 @@ use rand::Rng;
 
 pub trait Scatter {
     /// returns the next ray and the attenuation of the color.
-    fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
-        -> std::option::Option<(Ray, RGB)>;
+    fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R) -> (Ray, RGB);
 }
 
 #[derive(Debug)]
@@ -24,12 +23,11 @@ impl Diffuse {
 
 impl Scatter for Diffuse {
     fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
-        -> std::option::Option<(Ray, RGB)> {
+        -> (Ray, RGB) {
 
         let start = ray.at(cr.t);
         let dir   = cr.normal + pick_in_sphere(&mut *rng);
-
-        Some((Ray::new(start, dir), self.albedo))
+        (Ray::new(start, dir), self.albedo)
     }
 }
 
@@ -47,7 +45,7 @@ impl Metalic {
 
 impl Scatter for Metalic {
     fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
-        -> std::option::Option<(Ray, RGB)> {
+        -> (Ray, RGB) {
 
         let start = ray.at(cr.t);
         let reflected = if self.fuzziness == 0.0 {
@@ -57,7 +55,7 @@ impl Scatter for Metalic {
                 self.fuzziness * pick_in_sphere(&mut *rng)
         };
 
-        Some((Ray::new(start, reflected), self.albedo))
+        (Ray::new(start, reflected), self.albedo)
     }
 }
 
@@ -81,7 +79,7 @@ impl Dielectric {
 
 impl Scatter for Dielectric {
     fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
-        -> std::option::Option<(Ray, RGB)> {
+        -> (Ray, RGB) {
 
         let start = ray.at(cr.t);
 
@@ -95,12 +93,12 @@ impl Scatter for Dielectric {
         let reflected = reflect(ray.direction, cr.normal);
         if let Some(refracted) = refract(ray.direction, out_normal, ni_over_nt) {
             if rng.gen_range(0.0f32, 1.0f32) < self.schlick(cosine) {
-                Some((Ray::new(start, reflected), self.albedo))
+                (Ray::new(start, reflected), self.albedo)
             } else {
-                Some((Ray::new(start, refracted), self.albedo))
+                (Ray::new(start, refracted), self.albedo)
             }
         } else {
-            Some((Ray::new(start, reflected), self.albedo))
+            (Ray::new(start, reflected), self.albedo)
         }
     }
 }
@@ -125,7 +123,7 @@ impl Material {
 
 impl Scatter for Material {
     fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
-        -> std::option::Option<(Ray, RGB)> {
+        -> (Ray, RGB) {
         match self {
             Material::Diffuse(mt)    => {mt.scatter(ray, cr, rng)}
             Material::Metalic(mt)    => {mt.scatter(ray, cr, rng)}
