@@ -8,7 +8,7 @@ pub struct Ray {
 
 impl Ray {
     pub fn new(origin: Vector3, direction: Vector3) -> Ray {
-        Ray{origin, direction}
+        Ray{origin, direction: Vector3::unit(direction)}
     }
     pub fn at(&self, t: f32) -> Vector3 {
         self.origin + self.direction * t
