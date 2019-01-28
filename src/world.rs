@@ -20,10 +20,10 @@ impl Object {
 }
 
 impl Collide for Object {
-    fn collide(&self, ray: &Ray) -> Option<CollideResult> {
+    fn collide_within(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<CollideResult> {
         match &self {
             Object::Sphere(sph, _) => {
-                sph.collide(ray)
+                sph.collide_within(ray, t_min, t_max)
             }
         }
     }
