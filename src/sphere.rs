@@ -3,8 +3,8 @@ use crate::ray::Ray;
 use crate::collide::{Collision, Collide};
 
 pub struct Sphere {
-    pub center: Vector3,
-    pub radius: f32,
+    center: Vector3,
+    radius: f32,
 }
 
 impl Sphere {
