@@ -50,11 +50,11 @@ impl Vector3 {
             let mut v1 = Vector3::zero();
             let mut v2 = Vector3::zero();
             _mm_store_ps(v1.as_mut_ptr(), _mm_mul_ps(
-                _mm_set_ps(0.0,  self[1],  self[2],  self[0]),
-                _mm_set_ps(0.0, other[2], other[0], other[1])));
+                _mm_set_ps(0.0,  self[0],  self[2],  self[1]),
+                _mm_set_ps(0.0, other[1], other[0], other[2])));
             _mm_store_ps(v2.as_mut_ptr(), _mm_mul_ps(
-                _mm_set_ps(0.0,  self[2],  self[0],  self[1]),
-                _mm_set_ps(0.0, other[1], other[2], other[0])));
+                _mm_set_ps(0.0,  self[1],  self[0],  self[2]),
+                _mm_set_ps(0.0, other[0], other[2], other[1])));
             v1 - v2
         }
     }
