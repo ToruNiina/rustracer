@@ -7,7 +7,7 @@ use crate::background::Background;
 use rand_core::SeedableRng;
 use rand::Rng;
 
-pub struct Screen<B: Background> {
+pub struct Screen {
     camera:      Vector3,
     lower_left:  Vector3,
     horizontal:  Vector3,
@@ -19,10 +19,9 @@ pub struct Screen<B: Background> {
     rwidth:      f32,
     rheight:     f32,
     lens_radius: f32,
-    background:  B,
 }
 
-impl<B: Background> Screen<B> {
+impl Screen {
     pub fn new(camera:     Vector3,
                direction:  Vector3,
                view_up:    Vector3,
@@ -30,8 +29,7 @@ impl<B: Background> Screen<B> {
                aperture:       f32,
                focus_dist:     f32,
                width:        usize,
-               height:       usize,
-               background: B) -> Screen<B> {
+               height:       usize) -> Screen {
 
         let lens_radius  = aperture * 0.5;
 
@@ -61,8 +59,7 @@ impl<B: Background> Screen<B> {
                height,
                rwidth:  1.0 / width as f32,
                rheight: 1.0 / height as f32,
-               lens_radius,
-               background}
+               lens_radius}
     }
 
 
@@ -115,7 +112,7 @@ impl<B: Background> Screen<B> {
         }).collect()
     }
 
-    pub fn render(&self, world: World) -> Image {
+    pub fn render<Bg: Background>(&self, world: World<Bg>) -> Image {
         const N:usize = 100;
         let mut img = Image::new(self.width, self.height);
         let mut rng = rand_xorshift::XorShiftRng::from_rng(
@@ -124,7 +121,7 @@ impl<B: Background> Screen<B> {
         for w in 0..self.width {
             for h in 0..self.height {
                 let color = self.ray_through_lens(w, h, N, &mut rng).into_iter()
-                    .map(|ray| world.color(&ray, &self.background, &mut rng, 0).0)
+                    .map(|ray| world.color(&ray, &mut rng, 0).0)
                     .fold(RGB::new(0.0, 0.0, 0.0), |l, r| l + r) / (N as f32);
 
                 *img.at_mut(w, h) = std::convert::From::from(color.sqrt());

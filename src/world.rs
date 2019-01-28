@@ -38,19 +38,19 @@ impl Scatter for Object {
     }
 }
 
-pub struct World {
+pub struct World<Bg> {
     pub objects: std::vec::Vec<Object>,
+        bg:      Bg,
 }
 
-impl World {
-    pub fn new(objects: std::vec::Vec<Object>) -> World {
-        World{objects}
+impl<Bg: Background> World<Bg> {
+    pub fn new(objects: std::vec::Vec<Object>, bg: Bg) -> World<Bg> {
+        World{objects, bg}
     }
 
     /// returns color & depth of the recursion.
-    pub fn color<B, R>(&self, ray: &Ray, bg: &B, rng: &mut R, depth: usize) -> (RGB, usize)
+    pub fn color<R>(&self, ray: &Ray, rng: &mut R, depth: usize) -> (RGB, usize)
     where
-        B: Background,
         R: Rng
     {
         const DEPTH_LIMIT: usize = 100;
@@ -73,13 +73,13 @@ impl World {
 
         if let Some((nearest, collide)) = nearest {
             if let Some((next_ray, att)) = nearest.scatter(ray, collide, rng) {
-                let (c, d) = self.color(&next_ray, bg, rng, depth+1);
+                let (c, d) = self.color(&next_ray, rng, depth+1);
                 (att * c, d)
             } else {
                 (RGB::new(0.0, 0.0, 0.0), depth)
             }
         } else {
-            (From::from(bg.color_at(ray.direction)), depth)
+            (self.bg.color_at(ray.direction), depth)
         }
     }
 }

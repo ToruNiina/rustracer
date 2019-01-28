@@ -19,7 +19,7 @@ fn main() {
         /* vertical angle of view */ 30.0,
         /* diameter of aperture   */ 0.5,
         /* focus distance         */ vector::Vector3::new( 2.0, -2.0, -2.0).len(),
-        640, 320, background::SkyBg);
+        640, 320);
 
     let world = world::World::new(vec![
         world::Object::make_sphere(
@@ -40,7 +40,7 @@ fn main() {
         world::Object::make_sphere(
             vector::Vector3::new(-1.0,   0.0, -1.0),   -0.45,
             material::Material::make_dielectric(1.5, 1.0, 1.0, 1.0)),
-    ]);
+    ], background::SkyBg);
 
     screen.render(world).write_ppm("example.ppm").unwrap();
 }
