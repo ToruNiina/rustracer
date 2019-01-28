@@ -7,34 +7,32 @@ use crate::collide::{Collision, Collide};
 use crate::material::{Scatter, Material};
 use rand::Rng;
 
-pub enum Object {
-    Sphere(Sphere, Material),
+pub enum Shape {
+    Sphere(Sphere),
+}
+
+pub struct Object {
+    shape: Shape,
+    material: Material,
 }
 
 impl Object {
-    pub fn make_sphere(center: Vector3, radius: f32, mat: Material) -> Object {
-        Object::Sphere(Sphere::new(center, radius), mat)
+    pub fn make_sphere(sphere: Sphere, material: Material) -> Object {
+        Object{shape: Shape::Sphere(sphere), material}
     }
 }
 
 impl Collide for Object {
     fn collide_within(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<Collision> {
-        match &self {
-            Object::Sphere(sph, _) => {
-                sph.collide_within(ray, t_min, t_max)
-            }
+        match &self.shape {
+            Shape::Sphere(sphere) => {sphere.collide_within(ray, t_min, t_max)}
         }
     }
 }
 
 impl Scatter for Object {
-    fn scatter<R: Rng>(&self, ray: &Ray, cr: Collision, rng: &mut R)
-        -> (Ray, RGB) {
-        match &self {
-            Object::Sphere(_, mat) => {
-                mat.scatter(ray, cr, rng)
-            }
-        }
+    fn scatter<R: Rng>(&self, ray: &Ray, cr: Collision, rng: &mut R) -> (Ray, RGB) {
+        self.material.scatter(ray, cr, rng)
     }
 }
 
