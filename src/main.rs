@@ -28,22 +28,22 @@ fn main() {
     let world = world::World::new(vec![
         world::Object::make_sphere(
             Vector3::new(0.0, 0.0, -1.0), 0.5,
-            Material::make_diffuse(0.8, 0.3, 0.3)),
+            Material::make_diffuse(RGB::new(0.8, 0.3, 0.3))),
 
         world::Object::make_sphere(
             Vector3::new(0.0, -100.5, -1.0), 100.0,
-            Material::make_diffuse(0.5, 0.5, 0.5)),
+            Material::make_diffuse(RGB::new(0.5, 0.5, 0.5))),
 
         world::Object::make_sphere(
             Vector3::new(1.0, 0.0, -1.0), 0.5,
-            Material::make_metalic(0.3, 0.8, 0.6, 0.2)),
+            Material::make_metalic(0.3, RGB::new(0.8, 0.6, 0.2))),
 
         world::Object::make_sphere(
             Vector3::new(-1.0, 0.0, -1.0),  0.5,
-            Material::make_dielectric(1.5, 1.0, 1.0, 1.0)),
+            Material::make_dielectric(1.5, RGB::new(1.0, 1.0, 1.0))),
         world::Object::make_sphere(
             Vector3::new(-1.0, 0.0, -1.0), -0.45,
-            Material::make_dielectric(1.5, 1.0, 1.0, 1.0)),
+            Material::make_dielectric(1.5, RGB::new(1.0, 1.0, 1.0))),
     ], background::SkyBg);
 
     screen.render(world).write_ppm("example.ppm").unwrap();

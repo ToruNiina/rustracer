@@ -12,12 +12,12 @@ pub trait Scatter {
 
 #[derive(Debug)]
 pub struct Diffuse {
-    albedo: RGB,
+    albedo:   RGB,
 }
 
 impl Diffuse {
-    pub fn new(r: f32, g: f32, b: f32) -> Self {
-        Diffuse{albedo: RGB::new(r, g, b)}
+    pub fn new(albedo: RGB) -> Self {
+        Diffuse{albedo}
     }
 }
 
@@ -38,8 +38,8 @@ pub struct Metalic {
 }
 
 impl Metalic {
-    pub fn new(fuzziness: f32, r: f32, g: f32, b: f32) -> Self {
-        Metalic{fuzziness: clamp(fuzziness, 0.0, 1.0), albedo: RGB::new(r, g, b)}
+    pub fn new(fuzziness: f32, albedo: RGB) -> Self {
+        Metalic{fuzziness: clamp(fuzziness, 0.0, 1.0), albedo}
     }
 }
 
@@ -66,8 +66,8 @@ pub struct Dielectric {
 }
 
 impl Dielectric {
-    pub fn new(refidx: f32, r: f32, g: f32, b: f32) -> Self {
-        Dielectric{refidx, albedo: RGB::new(r, g, b)}
+    pub fn new(refidx: f32, albedo: RGB) -> Self {
+        Dielectric{refidx, albedo}
     }
 
     pub fn schlick(&self, cosine: f32) -> f32 {
@@ -104,20 +104,26 @@ impl Scatter for Dielectric {
 }
 
 pub enum Material {
-    Diffuse(Diffuse),
-    Metalic(Metalic),
-    Dielectric(Dielectric),
+    Diffuse   {diffuse:    Diffuse   },
+    Metalic   {metalic:    Metalic   },
+    Dielectric{dielectric: Dielectric},
 }
 
 impl Material {
-    pub fn make_diffuse(r: f32, g: f32, b: f32) -> Self {
-        Material::Diffuse(Diffuse::new(r, g, b))
+    pub fn make_diffuse(rgb: RGB) -> Self {
+        Material::Diffuse{
+            diffuse: Diffuse::new(rgb),
+        }
     }
-    pub fn make_metalic(f: f32, r: f32, g: f32, b: f32) -> Self {
-        Material::Metalic(Metalic::new(f, r, g, b))
+    pub fn make_metalic(f: f32, rgb: RGB) -> Self {
+        Material::Metalic{
+            metalic: Metalic::new(f, rgb),
+        }
     }
-    pub fn make_dielectric(n: f32, r: f32, g: f32, b: f32) -> Self {
-        Material::Dielectric(Dielectric::new(n, r, g, b))
+    pub fn make_dielectric(n: f32, rgb: RGB) -> Self {
+        Material::Dielectric{
+            dielectric: Dielectric::new(n, rgb),
+        }
     }
 }
 
@@ -125,9 +131,9 @@ impl Scatter for Material {
     fn scatter<R: Rng>(&self, ray: &Ray, cr: Collision, rng: &mut R)
         -> (Ray, RGB) {
         match self {
-            Material::Diffuse(mt)    => {mt.scatter(ray, cr, rng)}
-            Material::Metalic(mt)    => {mt.scatter(ray, cr, rng)}
-            Material::Dielectric(mt) => {mt.scatter(ray, cr, rng)}
+            Material::Diffuse{diffuse: mt}       => {mt.scatter(ray, cr, rng)}
+            Material::Metalic{metalic: mt}       => {mt.scatter(ray, cr, rng)}
+            Material::Dielectric{dielectric: mt} => {mt.scatter(ray, cr, rng)}
         }
     }
 }
