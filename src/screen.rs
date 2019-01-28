@@ -1,7 +1,7 @@
 use crate::vector::{Vector3, pick_in_circle};
 use crate::world::World;
 use crate::image::Image;
-use crate::color::{Color, RGB};
+use crate::color::RGB;
 use crate::ray::Ray;
 use crate::background::Background;
 use rand_core::SeedableRng;
