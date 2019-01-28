@@ -33,7 +33,6 @@ pub fn reflect(v: Vector3, n: Vector3) -> Vector3 {
 }
 /// Snell's law
 pub fn refract(v: Vector3, n: Vector3, ni_over_nt: f32) -> std::option::Option<Vector3> {
-    assert!((n.len() - 1.0).abs() < 1e-4);
     let uv = v.unit();
     let dt = Vector3::dot(uv, n);
     let d  = 1.0 - ni_over_nt * ni_over_nt * (1.0 - dt * dt);
@@ -143,15 +142,25 @@ mod tests {
 
     #[test]
     fn len() {
+        let tol: f32 = 3.0 / 4096.0;
+
         let u = Vector3::new(1.0, 2.0, 3.0);
         let l = Vector3::len(u);
-        assert_eq!(l, (1.0f32 + 4.0f32 + 9.0f32).sqrt());
+        assert!((l - (1.0f32 + 4.0 + 9.0).sqrt()).abs() < tol);
     }
     #[test]
     fn len_sq() {
         let u = Vector3::new(1.0, 2.0, 3.0);
         let l = Vector3::len_sq(u);
         assert_eq!(l, 1.0 + 4.0 + 9.0);
+    }
+    #[test]
+    fn rlen() {
+        let tol: f32 = 3.0 / 4096.0;
+
+        let u = Vector3::new(1.0, 2.0, 3.0);
+        let l = Vector3::rlen(u);
+        assert!((l - 1.0 / (1.0f32 + 4.0 + 9.0).sqrt()).abs() < tol);
     }
 
     #[test]
@@ -189,8 +198,9 @@ mod tests {
     }
     #[test]
     fn unit() {
+        let tol: f32 = 3.0 / 4096.0;
         let u = Vector3::new(1.0, 2.0, 3.0);
         let n = Vector3::unit(u);
-        assert!((n.len() - 1.0).abs() < 1e-4 );
+        assert!((n.len() - 1.0).abs() < tol);
     }
 }

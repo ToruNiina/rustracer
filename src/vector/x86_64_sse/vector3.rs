@@ -7,6 +7,10 @@ use std::arch::x86_64::_mm_sub_ps;
 use std::arch::x86_64::_mm_mul_ps;
 use std::arch::x86_64::_mm_div_ps;
 
+use std::arch::x86_64::_mm_set_ss;
+use std::arch::x86_64::_mm_rsqrt_ss;
+use std::arch::x86_64::_mm_cvtss_f32;
+
 #[derive(Debug, Copy, Clone, PartialEq)]
 #[repr(align(16))]
 pub struct Vector3 {
@@ -29,13 +33,22 @@ impl Vector3 {
     }
 
     pub fn len(self) -> f32 {
-        self.len_sq().sqrt()
+        let lsq = self.len_sq();
+        unsafe {
+            lsq * _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(lsq)))
+        }
     }
     pub fn len_sq(self) -> f32 {
         self.dot(self)
     }
+    pub fn rlen(self) -> f32 {
+        let lsq = self.len_sq();
+        unsafe {
+            _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(lsq)))
+        }
+    }
     pub fn unit(self) -> Vector3 {
-        self / self.len()
+        self * self.rlen()
     }
     pub fn dot(self, other: Vector3) -> f32 {
         unsafe {
