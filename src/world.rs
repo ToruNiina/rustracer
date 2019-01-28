@@ -46,16 +46,17 @@ impl World {
         World{objects}
     }
 
+    /// returns color & depth of the recursion.
     pub fn color<B>(&self,
                     ray: &Ray,
                     background: &B,
                     rng: &mut rand::rngs::ThreadRng,
-                    depth: usize) -> RGB
+                    depth: usize) -> (RGB, usize)
     where
         B:Background,
     {
         if depth >= 100 {
-            return RGB::new(0.0, 0.0, 0.0)
+            return (RGB::new(0.0, 0.0, 0.0), 100)
         }
 
         let mut nearest = None;
@@ -73,12 +74,13 @@ impl World {
 
         if let Some((nearest, collide)) = nearest {
             if let Some((next_ray, att)) = nearest.scatter(ray, collide, rng) {
-                att * self.color(&next_ray, background, rng, depth+1)
+                let (c, d) = self.color(&next_ray, background, rng, depth+1);
+                (att * c, d)
             } else {
-                RGB::new(0.0, 0.0, 0.0)
+                (RGB::new(0.0, 0.0, 0.0), depth)
             }
         } else {
-            From::from(background.color_at(ray.direction))
+            (From::from(background.color_at(ray.direction)), depth)
         }
     }
 }
