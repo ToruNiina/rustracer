@@ -1,13 +1,13 @@
 use crate::vector::*;
 use crate::color::RGB;
-use crate::collide::CollideResult;
+use crate::collide::Collision;
 use crate::ray::Ray;
 use crate::util::*;
 use rand::Rng;
 
 pub trait Scatter {
     /// returns the next ray and the attenuation of the color.
-    fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R) -> (Ray, RGB);
+    fn scatter<R: Rng>(&self, ray: &Ray, cr: Collision, rng: &mut R) -> (Ray, RGB);
 }
 
 #[derive(Debug)]
@@ -22,7 +22,7 @@ impl Diffuse {
 }
 
 impl Scatter for Diffuse {
-    fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
+    fn scatter<R: Rng>(&self, ray: &Ray, cr: Collision, rng: &mut R)
         -> (Ray, RGB) {
 
         let start = ray.at(cr.t);
@@ -44,7 +44,7 @@ impl Metalic {
 }
 
 impl Scatter for Metalic {
-    fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
+    fn scatter<R: Rng>(&self, ray: &Ray, cr: Collision, rng: &mut R)
         -> (Ray, RGB) {
 
         let start = ray.at(cr.t);
@@ -78,7 +78,7 @@ impl Dielectric {
 }
 
 impl Scatter for Dielectric {
-    fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
+    fn scatter<R: Rng>(&self, ray: &Ray, cr: Collision, rng: &mut R)
         -> (Ray, RGB) {
 
         let start = ray.at(cr.t);
@@ -122,7 +122,7 @@ impl Material {
 }
 
 impl Scatter for Material {
-    fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
+    fn scatter<R: Rng>(&self, ray: &Ray, cr: Collision, rng: &mut R)
         -> (Ray, RGB) {
         match self {
             Material::Diffuse(mt)    => {mt.scatter(ray, cr, rng)}

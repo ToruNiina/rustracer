@@ -1,6 +1,6 @@
 use crate::vector::Vector3;
 use crate::ray::Ray;
-use crate::collide::{CollideResult, Collide};
+use crate::collide::{Collision, Collide};
 
 pub struct Sphere {
     pub center: Vector3,
@@ -14,7 +14,7 @@ impl Sphere {
 }
 
 impl Collide for Sphere {
-    fn collide_within(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<CollideResult> {
+    fn collide_within(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<Collision> {
         let oc = ray.origin - self.center;
         let b  = 2.0 * Vector3::dot(oc, ray.direction);
         let c  = oc.len_sq() - self.radius * self.radius;
@@ -26,13 +26,13 @@ impl Collide for Sphere {
         let t = (-b - sqrt_d) * 0.5;
         if t_min <= t && t <= t_max {
             let normal = (ray.at(t) - self.center) / self.radius;
-            return Some(CollideResult{t, normal})
+            return Some(Collision{t, normal})
         }
 
         let t = (-b + sqrt_d) * 0.5;
         if t_min <= t && t <= t_max {
             let normal = (ray.at(t) - self.center) / self.radius;
-            return Some(CollideResult{t, normal})
+            return Some(Collision{t, normal})
         }
         None
     }

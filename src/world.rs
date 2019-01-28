@@ -3,7 +3,7 @@ use crate::vector::Vector3;
 use crate::color::RGB;
 use crate::background::Background;
 use crate::ray::Ray;
-use crate::collide::{CollideResult, Collide};
+use crate::collide::{Collision, Collide};
 use crate::material::{Scatter, Material};
 use rand::Rng;
 
@@ -18,7 +18,7 @@ impl Object {
 }
 
 impl Collide for Object {
-    fn collide_within(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<CollideResult> {
+    fn collide_within(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<Collision> {
         match &self {
             Object::Sphere(sph, _) => {
                 sph.collide_within(ray, t_min, t_max)
@@ -28,7 +28,7 @@ impl Collide for Object {
 }
 
 impl Scatter for Object {
-    fn scatter<R: Rng>(&self, ray: &Ray, cr: CollideResult, rng: &mut R)
+    fn scatter<R: Rng>(&self, ray: &Ray, cr: Collision, rng: &mut R)
         -> (Ray, RGB) {
         match &self {
             Object::Sphere(_, mat) => {
