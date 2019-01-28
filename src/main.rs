@@ -21,7 +21,7 @@ fn main() {
         /* camera position        */ Vector3::new(-2.0,  0.0,  1.0),
         /* camera direction       */ Vector3::new( 2.0,  0.2, -2.0),
         /* camera view-up         */ Vector3::new( 0.0,  1.0,  0.0),
-        /* vertical angle of view */ 30.0,
+        /* vertical angle of view */ 90.0,
         /* diameter of aperture   */ 0.01,
         /* focus distance         */ Vector3::new( 2.0, -2.0, -2.0).len(),
         640, 320);
