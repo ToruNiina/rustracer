@@ -157,13 +157,29 @@ mod tests {
     }
     #[test]
     fn cross() {
-        let u = Vector3::new(1.0, 2.0, 3.0);
-        let v = Vector3::new(2.0, 3.0, 4.0);
-        let c = Vector3::cross(u, v);
-        let d1 = Vector3::dot(u, c);
-        let d2 = Vector3::dot(v, c);
-        assert_eq!(d1, 0.0);
-        assert_eq!(d2, 0.0);
+        {
+            let u = Vector3::new(1.0, 2.0, 3.0);
+            let v = Vector3::new(2.0, 3.0, 4.0);
+            let c = Vector3::cross(u, v);
+            let d1 = Vector3::dot(u, c);
+            let d2 = Vector3::dot(v, c);
+            assert!(d1 < 1e-5);
+            assert!(d2 < 1e-5);
+        }
+        {
+            let u = Vector3::new(1.0, 0.0, 0.0);
+            let v = Vector3::new(0.0, 2.0, 0.0);
+            let c = Vector3::cross(u, v);
+
+            assert_eq!(c[0], 0.0);
+            assert_eq!(c[1], 0.0);
+            assert_eq!(c[2], 2.0);
+
+            let d1 = Vector3::dot(u, c);
+            let d2 = Vector3::dot(v, c);
+            assert!(d1 < 1e-5);
+            assert!(d2 < 1e-5);
+        }
     }
     #[test]
     fn unit() {
