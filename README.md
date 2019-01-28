@@ -8,6 +8,8 @@ tiny Ray-tracer based on the book "Ray Tracing in one Weekend".
 
 ## Change log
 
+- v0.2.0
+  - implement object with emission
 - v0.1.0
   - implement all the stuff in the book.
 
