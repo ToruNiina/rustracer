@@ -3,7 +3,7 @@ mod error;
 mod image;
 mod vector;
 mod ray;
-mod screen;
+mod camera;
 mod sphere;
 mod collide;
 mod material;
@@ -17,7 +17,7 @@ fn main() {
     use crate::sphere::Sphere;
     use crate::color::RGB;
 
-    let camera = screen::Camera::new(
+    let camera = camera::Camera::new(
         /* camera position        */ Vector3::new(-2.0,  0.0,  1.0),
         /* camera direction       */ Vector3::new( 2.0,  0.2, -2.0),
         /* camera view-up         */ Vector3::new( 0.0,  1.0,  0.0),
