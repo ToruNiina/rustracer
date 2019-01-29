@@ -17,7 +17,7 @@ fn main() {
     use crate::sphere::Sphere;
     use crate::color::RGB;
 
-    let screen = screen::Screen::new(
+    let camera = screen::Camera::new(
         /* camera position        */ Vector3::new(-2.0,  0.0,  1.0),
         /* camera direction       */ Vector3::new( 2.0,  0.2, -2.0),
         /* camera view-up         */ Vector3::new( 0.0,  1.0,  0.0),
@@ -64,5 +64,5 @@ fn main() {
             RGB::new(0.0, 0.0, 0.0)),
     ], background::UniBg::new(RGB::new(0.5, 0.5, 0.5)));
 
-    screen.render(world).write_ppm("example.ppm").unwrap();
+    camera.render(world).write_ppm("example.ppm").unwrap();
 }

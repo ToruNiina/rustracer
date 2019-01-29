@@ -7,8 +7,8 @@ use crate::background::Background;
 use rand_core::SeedableRng;
 use rand::Rng;
 
-pub struct Screen {
-    camera:      Vector3,
+pub struct Camera {
+    location:    Vector3,
     lower_left:  Vector3,
     horizontal:  Vector3,
     vertical:    Vector3,
@@ -21,15 +21,15 @@ pub struct Screen {
     lens_radius: f32,
 }
 
-impl Screen {
-    pub fn new(camera:     Vector3,
+impl Camera {
+    pub fn new(location:   Vector3,
                direction:  Vector3,
                view_up:    Vector3,
                vertical_fov:   f32,
                aperture:       f32,
                focus_dist:     f32,
                width:        usize,
-               height:       usize) -> Screen {
+               height:       usize) -> Camera {
 
         let lens_radius  = aperture * 0.5;
 
@@ -45,12 +45,12 @@ impl Screen {
         // the virtual screen plane is now at the `focus_dist` distant from camera
 
         let screen_offset = half_width * u + half_height * v + w;
-        let lower_left = camera - focus_dist * screen_offset;
+        let lower_left = location - focus_dist * screen_offset;
 
         let horizontal = focus_dist * 2.0 * half_width  * u;
         let vertical   = focus_dist * 2.0 * half_height * v;
 
-        Screen{camera,
+        Camera{location,
                lower_left,
                horizontal,
                vertical,
@@ -102,7 +102,7 @@ impl Screen {
             let lens_offset = self.lens_radius * cx * self.u +
                               self.lens_radius * cy * self.v;
 
-            let src = self.camera + lens_offset;
+            let src = self.location + lens_offset;
             let dst = self.point_at_ratio(
                 (w as f32 + rng.gen_range(0.0f32, 1.0f32)) * self.rwidth,
                 (h as f32 + rng.gen_range(0.0f32, 1.0f32)) * self.rheight);
