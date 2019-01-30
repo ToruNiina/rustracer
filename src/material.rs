@@ -106,8 +106,8 @@ impl Material {
 impl Scatter for Material {
     fn scatter<R: Rng>(&self, ray: &Ray, cr: Collision, rng: &mut R) -> Ray {
         match self {
-            Material::Diffuse(mt)       => {mt.scatter(ray, cr, rng)}
-            Material::Metalic(mt)       => {mt.scatter(ray, cr, rng)}
+            Material::Diffuse(mt)    => {mt.scatter(ray, cr, rng)}
+            Material::Metalic(mt)    => {mt.scatter(ray, cr, rng)}
             Material::Dielectric(mt) => {mt.scatter(ray, cr, rng)}
         }
     }
