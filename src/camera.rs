@@ -130,3 +130,75 @@ impl Camera {
         img
     }
 }
+
+pub struct CameraBuilder {
+    loc: std::option::Option<Vector3>,
+    dir: std::option::Option<Vector3>,
+    vup: std::option::Option<Vector3>,
+    aov: std::option::Option<f32>,
+    apa: std::option::Option<f32>,
+    fd:  std::option::Option<f32>,
+    w:   std::option::Option<usize>,
+    h:   std::option::Option<usize>,
+}
+
+impl CameraBuilder {
+    pub fn new() -> Self {
+        Self {
+            loc: None,
+            dir: None,
+            vup: None,
+            aov: None,
+            apa: None,
+            fd:  None,
+            w:   None,
+            h:   None,
+        }
+    }
+
+    pub fn position(mut self, loc: Vector3) -> Self {
+        self.loc = Some(loc);
+        self
+    }
+    pub fn direction(mut self, dir: Vector3) -> Self {
+        self.dir = Some(dir);
+        self
+    }
+    pub fn view_up(mut self, vup: Vector3) -> Self {
+        self.vup = Some(vup);
+        self
+    }
+    pub fn vertical_angle_of_view(mut self, aov: f32) -> Self {
+        self.aov = Some(aov);
+        self
+    }
+    pub fn diameter_of_apature(mut self, apa: f32) -> Self {
+        self.apa = Some(apa);
+        self
+    }
+    pub fn focus_distance(mut self, fd: f32) -> Self {
+        self.fd = Some(fd);
+        self
+    }
+    pub fn width(mut self, w: usize) -> Self {
+        self.w = Some(w);
+        self
+    }
+    pub fn height(mut self, h: usize) -> Self {
+        self.h = Some(h);
+        self
+    }
+    pub fn build(self) -> Camera {
+        Camera::new(self.loc.unwrap(),
+                    self.dir.unwrap(),
+                    self.vup.unwrap(),
+                    self.aov.unwrap(),
+                    self.apa.unwrap(),
+                    self.fd.unwrap(),
+                    self.w.unwrap(),
+                    self.h.unwrap())
+    }
+}
+
+
+

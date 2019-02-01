@@ -18,14 +18,16 @@ fn main() {
     use crate::sphere::Sphere;
     use crate::color::RGB;
 
-    let camera = camera::Camera::new(
-        /* camera position        */ Vector3::new(-2.0,  0.0,  1.0),
-        /* camera direction       */ Vector3::new( 2.0,  0.2, -2.0),
-        /* camera view-up         */ Vector3::new( 0.0,  1.0,  0.0),
-        /* vertical angle of view */ 90.0,
-        /* diameter of aperture   */ 0.01,
-        /* focus distance         */ Vector3::new( 2.0, -2.0, -2.0).len(),
-        640, 320);
+    let camera = camera::CameraBuilder::new()
+        .position(Vector3::new(-2.0,  0.0,  1.0))
+        .direction(Vector3::new( 2.0,  0.2, -2.0))
+        .view_up(Vector3::new( 0.0,  1.0,  0.0))
+        .vertical_angle_of_view(90.0)
+        .diameter_of_apature(0.01)
+        .focus_distance(Vector3::new( 2.0, -2.0, -2.0).len())
+        .width(640)
+        .height(320)
+        .build();
 
     let world = world::World::new(vec![
         object::Object::make_sphere(
